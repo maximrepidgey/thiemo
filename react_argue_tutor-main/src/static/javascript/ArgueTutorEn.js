@@ -25,13 +25,18 @@ function ready(fn) {
 export {ready}
 
 /**
- * Initializes chatbot and gets first response
+ * Initializes chatbot, gets first response, and loads intro message
  *
  * @param updateChatBoxContent
  *          function that updates the chat box with the argument passed to it
  */
-function initializeBot(updateChatBoxContent) {
-    getFirstResponse(updateChatBoxContent);
+function initializeBot(updateChatBoxContent, gpt) {
+    console.log(gpt)
+    if (gpt) {
+        getResponse("StartGPT", gpt, updateChatBoxContent);
+    } else {
+        getResponse("Introduction", gpt, updateChatBoxContent);
+    }
 }
 export {initializeBot}
 
@@ -49,15 +54,6 @@ function getTime() {
 
 export {getTime}
 
-/**
- * Loads intro message
- *
- * @param updateChatBoxContent
- *          function that updates the chatbox with the given value passed as argument
- */
-function getFirstResponse(updateChatBoxContent) {
-    getResponse("Einführung", updateChatBoxContent);
-}
 
 /**
  * adds chatbot message to the chatbox
@@ -123,19 +119,19 @@ const EMAIL_RESULT = "E-Mail öffnen";
  * @param updateChatBoxContent
  *          method to update the chatbox with the bots response
  */
-function getBotResponse(text, updateChatBoxContent) {
+function getBotResponse(text, gpt, updateChatBoxContent) {
     text = text.toLowerCase(); // convert input text to lowercase
 
     // restart evaluation
     if (text.toLowerCase().includes("neustart")) {
-        getResponse("Einführung", updateChatBoxContent);
+        getResponse("Introduction", gpt, updateChatBoxContent);
         return;
     }
 
-    getSmalltalkResponse(text, (response) => {
+    getSmalltalkResponse(text, gpt, (response) => {
 
         if (response.includes("IDKresponse")) {
-            updateChatBoxContent(getIDKResponse(updateChatBoxContent));
+            updateChatBoxContent(getIDKResponse(gpt, updateChatBoxContent));
         } else {
             updateChatBoxContent(response);
         }
@@ -147,12 +143,16 @@ function getBotResponse(text, updateChatBoxContent) {
  * get response from python chatterbot backend and update the chatbox with the received answer
  * @param text
  *          request of the user
+ * @param gpt
+ *          boolean if chatgpt option is activated
  * @param updateChatBoxContent
  *          function to update the chatbox (takes the html response as parameter)
  * @returns {null}
  */
-function getResponse(text, updateChatBoxContent) {
-    fetch(CHATBOT_URL + "/getResponse?msg=" + text,
+function getResponse(text, gpt, updateChatBoxContent) {
+    //todo add param
+    console.log(text)
+    fetch(CHATBOT_URL + "/getResponse?gpt=" + gpt + "&msg=" + text,
         {
             method: "GET",
             headers: {
@@ -168,25 +168,25 @@ function getResponse(text, updateChatBoxContent) {
         });
 }
 
-function getSmalltalkResponse(text, andThen) {
+function getSmalltalkResponse(text, gpt, andThen) {
     if (text.includes("joke") || text.includes("gag") || text.includes("wit") || text.includes("fun")) { // tell joke
         text = "Erzähl mir einen Witz";
     }
 
-    let response = getResponse(text, andThen);
+    let response = getResponse(text, gpt, andThen);
     // interrupt/smalltalk
     if (evaluationRunning) {
     }
     return response;
 }
 
-function getIDKResponse(updateChatBoxContent) {
+function getIDKResponse(gpt, updateChatBoxContent) {
     IDKcounter++; // count IDK
     let botReply;
     if (IDKcounter < 2) {
-        botReply = getResponse(IDK_REPLY, updateChatBoxContent);
+        botReply = getResponse(IDK_REPLY, gpt, updateChatBoxContent);
     } else { // reply with email suggestion after 2 attempts
-        botReply = getResponse(EMAIL_RESULT, updateChatBoxContent);
+        botReply = getResponse(EMAIL_RESULT, gpt, updateChatBoxContent);
     }
     return botReply;
 }
@@ -199,7 +199,7 @@ function getIDKResponse(updateChatBoxContent) {
  * @param updateChatBoxContent
  *          method to update the chatbox content
  */
-function submitMessage(text, updateChatBoxContent) {
+function submitMessage(text, gpt, updateChatBoxContent) {
     if (text.trim() === "") {
         return;
     }
@@ -209,7 +209,7 @@ function submitMessage(text, updateChatBoxContent) {
     document.getElementById("buttonInput").disabled = true;
     document.getElementById("textInput").disabled = true;
 
-    getBotResponse(text, updateChatBoxContent);
+    getBotResponse(text, gpt, updateChatBoxContent);
 }
 
 export {submitMessage}
@@ -223,6 +223,7 @@ function showPrivacy() {
     document.getElementById("feedback").style.display = 'none';
     document.getElementById("scrollbox").style.display = 'none';
     document.getElementById("userInput").style.display = 'none';
+    document.getElementById("chatgpt").style.display = 'none';
     document.getElementById("privacy").style.display = 'inline-block';
 }
 export {showPrivacy}
@@ -233,7 +234,7 @@ export {showPrivacy}
 function hidePrivacy() {
     document.getElementById("privacy").style.display = 'none';
 
-    document.querySelectorAll("#open-feedback-button, #open-help-button, #open-Detail-button")
+    document.querySelectorAll("#open-feedback-button, #open-help-button, #open-Detail-button, #chatgpt")
         .forEach(e => e.style.display = '');
     document.getElementById("scrollbox").style.display = '';
     document.getElementById("userInput").style.display = '';
@@ -273,6 +274,19 @@ function hideFeedback() {
 }
 
 export {hideFeedback}
+
+
+function activateGPT() {
+//    todo change color to green
+
+}
+
+
+function closeGPT() {
+
+}
+
+export {activateGPT, closeGPT}
 
 /**
  * displays show detail (FAQ) interface
@@ -339,14 +353,14 @@ export {showChat}
  * @param text
  *          user message
  */
-function chatSuggestCall(chatBot, text) {
+function chatSuggestCall(chatBot, gpt, text) {
     const elems = document.getElementsByClassName('chatSuggest');
     for (const elem of elems) {
         elem.disabled = true
     }
 
     document.getElementById("textInput").value = text;
-    submitMessage(text, chatBot.updateChatBoxContent);
+    submitMessage(text, gpt, chatBot.updateChatBoxContent);
 }
 export {chatSuggestCall}
 
@@ -516,6 +530,7 @@ function highlightKeyword(text, keyword) {
 
 
     console.log(keyword)
+    // removes the first letter of the word and joins it in the end
     // words beginning with Umlauts cannot use the \b property in the RegExp since that doesn't support utf-8 characters
     if (word[0] === "ö" || word[0] === "Ö" || word[0] === "ä" || word[0] === "Ä" || word[0] === "ü" || word[0] === "Ü") {
         html = html.replace(new RegExp(word[0].toUpperCase() + word.slice(1), 'gu'), '</span><span class=\"annotation-0\">' + word[0].toUpperCase() + word.slice(1) + '</span>')
@@ -610,10 +625,10 @@ function computeDashboard(subjectivity, polarity, userText, sentences, addOnClic
     document.getElementById("close-dashboard-button").style.display = '';
 
     Swal({
-        title: 'Ihr Dashboard ist fertig!',
-        text: 'Sie können sich nun die Analyseergebnisse ansehen. Dies ist der letzte Bildschirm. Um den Prozess erneut zu starten, können Sie nach unten scrollen und zur Einleitung zurückkehren!',
+        title: 'Your Dashboard is ready!',
+        text: 'You can now view the analysis results. This is the last screen. To start the process again, you can scroll down and return to the introduction!',
         icon: 'success',
-        confirmButtonText: 'Ergebnisse anzeigen',
+        confirmButtonText: 'Show results',
         confirmButtonColor: '#00762C'
     })
 }
@@ -629,19 +644,19 @@ export {computeDashboard}
 function writtenPolarity(polarity) {
     let result;
     if (-1.0 <= polarity && polarity <= -0.6) {
-        result = "Ihr Text ist sehr negativ geschrieben. Es scheint so, als ob Ihr Text viele negative Begriffe enthält und deshalb in diesen Abschnitt eingeordnet wird."
+        result = "Your text is written in a very negative way. It seems that your text contains many negative terms and is therefore placed in this section."
     }
     if (-0.6 < polarity && polarity <= -0.2) {
-        result = "Ihr Text ist negativ geschrieben. Es scheint, als ob Ihr Text einige negative Begriffe enthält und deshalb in diesen Abschnitt eingeordnet wird."
+        result = "Your text is written in a negative way. It seems that your text contains some negative terms and is therefore placed in this section."
     }
     if (-0.2 < polarity && polarity <= 0.2) {
-        result = "Ihr Text ist neutral geschrieben. Es gibt keine Extreme in Bezug auf Positivität oder Negativität."
+        result = "Your text is written in a neutral way. There are no extremes in terms of positivity or negativity."
     }
     if (0.2 < polarity && polarity <= 0.6) {
-        result = "Ihr Text ist positiv geschrieben. Es scheint, dass Ihr Text einige positive Begriffe enthält und daher in diesen Bereich eingeordnet wird."
+        result = "Your text is written in a positive way. It seems that your text contains some positive terms and is therefore classified in this area."
     }
     if (0.6 < polarity && polarity <= 1.0) {
-        result = "Ihr Text ist sehr positiv geschrieben. Es scheint, als ob Ihr Text viele positive Begriffe enthält und deshalb in diesen Abschnitt eingeordnet wird."
+        result = "Your text is written in a very positive way. It seems as if your text contains many positive terms and is therefore placed in this section."
     }
     document.getElementById("writtenPolarity").innerText = result;
 }
@@ -655,19 +670,19 @@ function writtenPolarity(polarity) {
 function writtenSubjectivity(subjectivity) {
     let result; //0 very objective/1 very subjective
     if (0.0 <= subjectivity && subjectivity <= 0.2) {
-        result = "Ihr Text ist sehr objektiv geschrieben. Das bedeutet, dass Sie einen Text verfasst haben, der fast keine persönlichen Meinungen enthält, sondern viele faktenbasierte Informationen."
+        result = "Your text is written very objectively. This means that you have written a text that contains almost no personal opinions, but a lot of fact-based information."
     }
     if (0.2 < subjectivity && subjectivity <= 0.4) {
-        result = "Ihr Text ist objektiv geschrieben. Das bedeutet, dass Sie einen Text verfasst haben, der wenige persönliche Meinungen, aber mehr sachliche Informationen enthält."
+        result = "Your text is written objectively. This means that you have written a text that contains few personal opinions but more factual information."
     }
     if (0.4 < subjectivity && subjectivity <= 0.6) {
-        result = "Ihr Text enthält einige subjektive Elemente. Das bedeutet, dass Sie einen Text geschrieben haben, der einige persönliche Meinungen, aber auch einige sachliche Informationen enthält."
+        result = "Your text contains some subjective elements. This means that you have written a text that contains some personal opinions but also some factual information."
     }
     if (0.6 < subjectivity && subjectivity <= 0.8) {
-        result = "Ihr Text enthält einige stark subjektive Elemente, d.h. Sie haben ein gewisses Maß an subjektiver Meinung und weniger faktenbasierte Informationen in Ihren Text eingebaut."
+        result = "Your text contains some strongly subjective elements, i.e. you have included a certain amount of subjective opinion and less fact-based information in your text."
     }
     if (0.8 < subjectivity && subjectivity <= 1.0) {
-        result = "Ihr Text enthält eine Menge subjektiver Elemente. Das bedeutet, dass Sie eine Menge subjektiver Meinungen in Ihren Text eingebaut haben und fast keine faktenbasierten Informationen."
+        result = "Your text contains a lot of subjective elements. This means that you have included a lot of subjective opinions in your text and almost no fact-based information."
     }
     document.getElementById("writtenSubjectivity").innerText = result;
 }

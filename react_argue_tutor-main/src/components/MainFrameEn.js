@@ -23,9 +23,9 @@ import {
     showOpenFeedbackButton,
     showPrivacy,
     submitMessage
-} from "../static/javascript/ArgueTutor";
+} from "../static/javascript/ArgueTutorEn";
 
-class MainFrame extends React.Component {
+class MainFrameEn extends React.Component {
 
     /**
      * Handles injected code
@@ -42,7 +42,7 @@ class MainFrame extends React.Component {
         window.chatSuggest = function (text) {
             that.setState({wasQuestion: true},
 
-                () => chatSuggestCall(that, text)
+                () => chatSuggestCall(that, that.state.chatGPTColor, text)
             );
         }
 
@@ -138,7 +138,8 @@ class MainFrame extends React.Component {
             topKeywords: [],
             dashboardText: '',
             ascPolSentences: [[]],
-            ascSubSentences: [[]]
+            ascSubSentences: [[]],
+            chatGPTColor: false
         };
 
         /**
@@ -147,9 +148,9 @@ class MainFrame extends React.Component {
         ready(() => {
             // The following is meant for the login:
             let userName = "";
-            while (!(new RegExp('[a-zA-Z0-9\b]{4}-rdexp$')).test(userName)) {
-                userName = prompt("Bitte gib Deinen Code ein :");
-            }
+            // while (!(new RegExp('[a-zA-Z0-9\b]{4}-rdexp$')).test(userName)) {
+            //     userName = prompt("Please enter your code :");
+            // }
 
             showPrivacy()
         });
@@ -274,6 +275,21 @@ class MainFrame extends React.Component {
         }
     }
 
+    chatGPT = async () => {
+        // if active reset to predefined bot (red)
+        // todo pass parameter to .answer function (that send to backend)
+        if (this.state.chatGPTColor) {
+            document.documentElement.style.setProperty("--main-color", "#b51f1f")
+            // show instructions about using normal bot
+        } else {
+            document.documentElement.style.setProperty("--main-color", "#35BC55")
+            // show instructions about using chatgpt bot
+        }
+        await this.setState({chatGPTColor: !this.state.chatGPTColor})
+        initializeBot(this.updateChatBoxContent, this.state.chatGPTColor)
+    }
+
+
 
     /**
      * Computes the essay stats based on the given input
@@ -313,6 +329,7 @@ class MainFrame extends React.Component {
             readingTime.innerHTML = seconds + "s";
         }
 
+        // todo redefine stop words
         let nonStopWords = [];
         let stopWords = ["a", "ab", "aber", "ach", "acht", "achte", "achten", "achter", "achtes", "ag", "alle", "allein", "allem", "allen", "aller", "allerdings", "alles", "allgemeinen", "als", "also", "am", "an", "ander", "andere", "anderem", "anderen", "anderer", "anderes", "anderm", "andern", "anderr", "anders", "au", "auch", "auf", "aus", "ausser", "ausserdem", "außer", "außerdem", "b", "bald", "bei", "beide", "beiden", "beim", "beispiel", "bekannt", "bereits", "besonders", "besser", "besten", "bin", "bis", "bisher", "bist", "c", "d", "d.h", "da", "dabei", "dadurch", "dafür", "dagegen", "daher", "dahin", "dahinter", "damals", "damit", "danach", "daneben", "dank", "dann", "daran", "darauf", "daraus", "darf", "darfst", "darin", "darum", "darunter", "darüber", "das", "dasein", "daselbst", "dass", "dasselbe", "davon", "davor", "dazu", "dazwischen", "daß", "dein", "deine", "deinem", "deinen", "deiner", "deines", "dem", "dementsprechend", "demgegenüber", "demgemäss", "demgemäß", "demselben", "demzufolge", "den", "denen", "denn", "denselben", "der", "deren", "derer", "derjenige", "derjenigen", "dermassen", "dermaßen", "derselbe", "derselben", "des", "deshalb", "desselben", "dessen", "deswegen", "dich", "die", "diejenige", "diejenigen", "dies", "diese", "dieselbe", "dieselben", "diesem", "diesen", "dieser", "dieses", "dir", "doch", "dort", "drei", "drin", "dritte", "dritten", "dritter", "drittes", "du", "durch", "durchaus", "durfte", "durften", "dürfen", "dürft", "e", "eben", "ebenso", "ehrlich", "ei", "ei,", "eigen", "eigene", "eigenen", "eigener", "eigenes", "ein", "einander", "eine", "einem", "einen", "einer", "eines", "einig", "einige", "einigem", "einigen", "einiger", "einiges", "einmal", "eins", "elf", "en", "ende", "endlich", "entweder", "er", "ernst", "erst", "erste", "ersten", "erster", "erstes", "es", "etwa", "etwas", "euch", "euer", "eure", "eurem", "euren", "eurer", "eures", "f", "folgende", "früher", "fünf", "fünfte", "fünften", "fünfter", "fünftes", "für", "g", "gab", "ganz", "ganze", "ganzen", "ganzer", "ganzes", "gar", "gedurft", "gegen", "gegenüber", "gehabt", "gehen", "geht", "gekannt", "gekonnt", "gemacht", "gemocht", "gemusst", "genug", "gerade", "gern", "gesagt", "geschweige", "gewesen", "gewollt", "geworden", "gibt", "ging", "gleich", "gott", "gross", "grosse", "grossen", "grosser", "grosses", "groß", "große", "großen", "großer", "großes", "gut", "gute", "guter", "gutes", "h", "hab", "habe", "haben", "habt", "hast", "hat", "hatte", "hatten", "hattest", "hattet", "heisst", "her", "heute", "hier", "hin", "hinter", "hoch", "hätte", "hätten", "i", "ich", "ihm", "ihn", "ihnen", "ihr", "ihre", "ihrem", "ihren", "ihrer", "ihres", "im", "immer", "in", "indem", "infolgedessen", "ins", "irgend", "ist", "j", "ja", "jahr", "jahre", "jahren", "je", "jede", "jedem", "jeden", "jeder", "jedermann", "jedermanns", "jedes", "jedoch", "jemand", "jemandem", "jemanden", "jene", "jenem", "jenen", "jener", "jenes", "jetzt", "k", "kam", "kann", "kannst", "kaum", "kein", "keine", "keinem", "keinen", "keiner", "keines", "kleine", "kleinen", "kleiner", "kleines", "kommen", "kommt", "konnte", "konnten", "kurz", "können", "könnt", "könnte", "l", "lang", "lange", "leicht", "leide", "lieber", "los", "m", "machen", "macht", "machte", "mag", "magst", "mahn", "mal", "man", "manche", "manchem", "manchen", "mancher", "manches", "mann", "mehr", "mein", "meine", "meinem", "meinen", "meiner", "meines", "mensch", "menschen", "mich", "mir", "mit", "mittel", "mochte", "mochten", "morgen", "muss", "musst", "musste", "mussten", "muß", "mußt", "möchte", "mögen", "möglich", "mögt", "müssen", "müsst", "müßt", "n", "na", "nach", "nachdem", "nahm", "natürlich", "neben", "nein", "neue", "neuen", "neun", "neunte", "neunten", "neunter", "neuntes", "nicht", "nichts", "nie", "niemand", "niemandem", "niemanden", "noch", "nun", "nur", "o", "ob", "oben", "oder", "offen", "oft", "ohne", "ordnung", "p", "q", "r", "recht", "rechte", "rechten", "rechter", "rechtes", "richtig", "rund", "s", "sa", "sache", "sagt", "sagte", "sah", "satt", "schlecht", "schluss", "schon", "sechs", "sechste", "sechsten", "sechster", "sechstes", "sehr", "sei", "seid", "seien", "sein", "seine", "seinem", "seinen", "seiner", "seines", "seit", "seitdem", "selbst", "sich", "sie", "sieben", "siebente", "siebenten", "siebenter", "siebentes", "sind", "so", "solang", "solche", "solchem", "solchen", "solcher", "solches", "soll", "sollen", "sollst", "sollt", "sollte", "sollten", "sondern", "sonst", "soweit", "sowie", "später", "startseite", "statt", "steht", "suche", "t", "tag", "tage", "tagen", "tat", "teil", "tel", "tritt", "trotzdem", "tun", "u", "uhr", "um", "und", "uns", "unse", "unsem", "unsen", "unser", "unsere", "unserer", "unses", "unter", "v", "vergangenen", "viel", "viele", "vielem", "vielen", "vielleicht", "vier", "vierte", "vierten", "vierter", "viertes", "vom", "von", "vor", "w", "wahr", "wann", "war", "waren", "warst", "wart", "warum", "was", "weg", "wegen", "weil", "weit", "weiter", "weitere", "weiteren", "weiteres", "welche", "welchem", "welchen", "welcher", "welches", "wem", "wen", "wenig", "wenige", "weniger", "weniges", "wenigstens", "wenn", "wer", "werde", "werden", "werdet", "weshalb", "wessen", "wie", "wieder", "wieso", "will", "willst", "wir", "wird", "wirklich", "wirst", "wissen", "wo", "woher", "wohin", "wohl", "wollen", "wollt", "wollte", "wollten", "worden", "wurde", "wurden", "während", "währenddem", "währenddessen", "wäre", "würde", "würden", "x", "y", "z", "z.b", "zehn", "zehnte", "zehnten", "zehnter", "zehntes", "zeit", "zu", "zuerst", "zugleich", "zum", "zunächst", "zur", "zurück", "zusammen", "zwanzig", "zwar", "zwei", "zweite", "zweiten", "zweiter", "zweites", "zwischen", "zwölf", "über", "überhaupt", "übrigens"];
         for (let i = 0; i < words.length; i++) {
@@ -360,7 +377,7 @@ class MainFrame extends React.Component {
             // added this, so that the scrollbox height is adjusted to the correct spot since the last one is still at the height of the
             // last question if we clicked on "textfeld öffnen"
             this.setState({wasQuestion: true},
-                () => submitMessage(text, this.updateChatBoxContent))
+                () => submitMessage(text, this.state.chatGPTColor, this.updateChatBoxContent))
         }
 
         /**
@@ -541,10 +558,10 @@ class MainFrame extends React.Component {
 
             if (feedbackText.trim() === "") {
                 Swal({
-                    title: 'Leerer Text!',
-                    text: 'Schreiben Sie bitte ein Feedback in das vorgesehene Textfeld',
+                    title: 'Empty text!',
+                    text: 'Please write feedback in the text box provided',
                     icon: 'error',
-                    confirmButtonText: 'Weiter',
+                    confirmButtonText: 'Next',
                     confirmButtonColor: '#00762C'
                 });
                 return;
@@ -571,10 +588,10 @@ class MainFrame extends React.Component {
                 body: JSON.stringify(_data)
             }).then(() => {
                 Swal({
-                    title: 'Erledigt!',
-                    text: 'Vielen Dank für Ihr Feedback! 🤩',
+                    title: 'Completed!',
+                    text: 'Thank you for the feedback! 🤩',
                     icon: 'success',
-                    confirmButtonText: 'Weiter',
+                    confirmButtonText: 'Next',
                     confirmButtonColor: '#00762C'
                 })
                 closeFeedbackButtonClick();
@@ -604,10 +621,10 @@ class MainFrame extends React.Component {
 
             if (submittedText.trim().length === 0) {
                 Swal({
-                    title: 'Leerer Text!',
-                    text: 'Schreiben Sie bitte einen Text mit etwa 200 Wörtern',
+                    title: 'Empty text!',
+                    text: 'Please write a text about 200 words',
                     icon: 'error',
-                    confirmButtonText: 'Weiter',
+                    confirmButtonText: 'Next',
                     confirmButtonColor: '#00762C'
                 })
                 return;
@@ -652,7 +669,7 @@ class MainFrame extends React.Component {
                 for (let i = 0; i < emotions.length; i++) {
                     const score = (emotions[i].score * 100).toFixed(2);
                     document.getElementById(emotions[i].label).value = score;
-                    document.getElementById(emotions[i].label).title = "Auf einer Skala von gar nicht zutreffend (0%) bis sehr zutreffend (100%) ist dieser Text: " + score + "%";
+                    document.getElementById(emotions[i].label).title = "On a scale from not at all appropriate (0%) to very appropriate (100%), this text is: " + score + "%";
                 }
                 let adaptedText = text.replaceAll("\\n", "\n");
 
@@ -661,9 +678,9 @@ class MainFrame extends React.Component {
                 const subj = subjectivity * 100;
                 const pol = ((polarity / 2.0) + 0.5) * 100;
                 document.getElementById("subjectivityBar").value = subj;
-                document.getElementById("subjectivityBar").title = "Auf einer Skala von sehr objektiv (0%) bis sehr subjektiv (100%) ist dieser Text: " + subj.toFixed(2) + "%";
+                document.getElementById("subjectivityBar").title = "On a scale from very objective (0%) to very subjective (100%), this text is: " + subj.toFixed(2) + "%";
                 document.getElementById("polarityBar").value = pol;
-                document.getElementById("polarityBar").title = "Auf einer Skala von sehr negativ (0%) bis sehr positiv (100%) ist dieser Text: " + pol.toFixed(2) + "%";
+                document.getElementById("polarityBar").title = "On a scale from very negative (0%) to very positive (100%), this text is: " + pol.toFixed(2) + "%";
                 document.getElementById("summary").innerText = summary;
 
                 closeEssayButtonClick();
@@ -678,7 +695,7 @@ class MainFrame extends React.Component {
                             <div class="avatar-wrapper">
                                 <img class="avatar" src="/img/ArgueTutor.png" alt="avatar">
                             </div>
-                            <div class="data-wrapper">Dein Essay wurde evaluiert. Du kannst die Ergebnisse nochmals ansehen, indem du auf den Dashboardknopf klickst.</div>
+                            <div class="data-wrapper">Your essay has been evaluated. You can view the results again by clicking on the dashboard button.</div>
                         </div>
                         <div class="message-time">` + getTime() + `</div>
                     </div>
@@ -698,7 +715,7 @@ class MainFrame extends React.Component {
                             <div class="avatar-wrapper">
                                 <img class="avatar" alt="avatar">
                             </div>
-                            <div class="data-wrapper">Bei der Evaluation deines Essays gab es einen Fehler, ich bitte um Entschuldigung. Bitte versuche es noch einmal, indem du oben auf den "Textfeld öffnen"-Knopf klickst.</div>
+                            <div class="data-wrapper">There was a mistake when evaluating your essay, I apologise. Please try again by clicking on the "Open text box" button above.</div>
                         </div>
                         <div class="message-time">` + getTime() + `</div>
                     </div>
@@ -731,9 +748,16 @@ class MainFrame extends React.Component {
                         <div className="header-logo"/>
                         <div className="header-botname">WritingTutor</div>
                         <div className="header-button-bar">
+
+
+                            <button className="header-button" id="chatgpt" onClick={this.chatGPT}>
+                                <i className="fa fa-robot"/>
+                                <span>GPT</span>
+                            </button>
+
                             <button className="header-button" id="open-help-button" onClick={helpButtonClick}>
                                 <i className="fa fa-question-circle"/>
-                                <span>Hilfe</span>
+                                <span>Help</span>
                             </button>
                             <button className="header-button" id="open-Detail-button" onClick={detailButtonClick}>
                                 <i className="fa fa-comments"/>
@@ -768,7 +792,7 @@ class MainFrame extends React.Component {
                                 onClick={closeHelpButtonClick}
                             >
                                 <i className="fa fa-times"/>
-                                <span>Hilfe</span>
+                                <span>Help</span>
                             </button>
                             <button
                                 className="header-button"
@@ -795,7 +819,7 @@ class MainFrame extends React.Component {
                                 onClick={closeEssayButtonClick}
                             >
                                 <i className="fa fa-times"/>
-                                Textfeld
+                                Text field
                             </button>
 
 
@@ -806,13 +830,13 @@ class MainFrame extends React.Component {
                                 onClick={() => this.showEssayField(this.state.dashboardIsComputed)}
                             >
                                 <i className="far fa-file-alt"/>
-                                <span>Textfeld</span>
+                                <span>Text field</span>
                             </button>
                         </div>
                     </div>
                     <div id="scrollbox">
                         <div className="messagecontainer">
-                            <div id="chatbox" dangerouslySetInnerHTML={this.state.chatBoxContent}></div>
+                            <div id="chatbox" dangerouslySetInnerHTML={this.state.chatBoxContent}/>
                         </div>
                     </div>
 
@@ -839,7 +863,7 @@ class MainFrame extends React.Component {
                                                 className="container-fluid text-center"
                                                 style={{fontSize: "1.5em", fontWeight: 600}}
                                             >
-                                                Hier ist Ihr Text
+                                                Here is you text
                                             </div>
                                         </div>
                                     </div>
@@ -869,18 +893,18 @@ class MainFrame extends React.Component {
                                             >
                                                 <div className="output row" style={{marginLeft: "-1rem"}}>
                                                     <div>
-                                                        Zeichen: <span id="characterCountDB">0</span>
+                                                        Characters: <span id="characterCountDB">0</span>
                                                     </div>
                                                     <div>
-                                                        Wörter: <span id="wordCountDashboard">0</span>
+                                                        Words: <span id="wordCountDashboard">0</span>
                                                     </div>
                                                 </div>
                                                 <div className="output row" style={{marginLeft: "-1rem"}}>
                                                     <div>
-                                                        Sätze: <span id="sentenceCountDB">0</span>
+                                                        Sentences: <span id="sentenceCountDB">0</span>
                                                     </div>
                                                     <div>
-                                                        Absätze: <span id="paragraphCountDB">0</span>
+                                                        Paragraphs: <span id="paragraphCountDB">0</span>
                                                     </div>
                                                 </div>
                                                 <div className="output row" style={{marginLeft: "-1rem"}}>
@@ -894,8 +918,8 @@ class MainFrame extends React.Component {
                                                 style={{display: "inline-block", width: "49%"}}
                                             >
                                                 <div className="keywords" style={{marginRight: "-1rem"}}>
-                                                    <h3>Top Schlüsselwörter</h3>
-                                                    (Klicke auf die Wörter, um sie im Text hervorzuheben)
+                                                    <h3>Top Keywords</h3>
+                                                    (Click on the words to highlight them in the text)
                                                     <ul id="topKeywordsDB"></ul>
                                                 </div>
                                             </div>
@@ -908,12 +932,12 @@ class MainFrame extends React.Component {
                                         <div className="p-2">
                                             {/* Visual and written feedback */}
                                             <div className="container-fluid text-center">
-                                                Haben Sie Fragen zur Analyse? (
+                                                Do you have any questions about the analysis? (
                                                 <a href="javascript:void(0);" onClick={() => {
                                                     closeDashboardButtonClick();
                                                     showDetail();
                                                 }}>
-                                                    Wie wurde mein Text analysiert?
+                                                    How was my text analysed?
                                                 </a>
                                                 )
                                             </div>
@@ -921,18 +945,18 @@ class MainFrame extends React.Component {
                                                 <div className="col-md-12 text-center my-5">
                                                     {/* Evaluation section within the Dashboard */}
                                                     <h1 style={{borderTopStyle: "solid"}}>
-                                                        Feedback zur Bewertung
+                                                        Evaluation feedback
                                                     </h1>
                                                     <div
                                                         className="container my-3"
                                                         style={{alignItems: "flex-start"}}
                                                     >
-                                                        <h4 className={"my-2"}>Generierte Zusammenfassung</h4>
+                                                        <h4 className={"my-2"}>Generated summary</h4>
                                                         <div id={"summary"}></div>
 
-                                                        <h4 className="my-2"> Subjektivität/Objektivität</h4>
+                                                        <h4 className="my-2"> Subjectivity/Objectivity </h4>
                                                         <progress className={"progress"} id="subjectivityBar"
-                                                                  title={"Auf einer Skala von sehr objektiv (0%) bis sehr subjektiv (100%) ist dieser Text: "}
+                                                                  title={"On a scale from very objective (0%) to very subjective (100%), this text is: "}
                                                                   max="100" value="90">
                                                         </progress>
                                                         <div
@@ -944,14 +968,14 @@ class MainFrame extends React.Component {
                                                                 className="col-md-2 border mx-auto"
                                                                 style={{borderRadius: 10, textAlign: "center"}}
                                                             >
-                                                                Sehr objektiv
+                                                                Very Objective
                                                             </div>
                                                             <div
                                                                 id="s2"
                                                                 className="col-md-2 border mx-auto"
                                                                 style={{borderRadius: 10, textAlign: "center"}}
                                                             >
-                                                                Objektiv
+                                                                Objective
                                                             </div>
                                                             <div
                                                                 id="s3"
@@ -965,23 +989,23 @@ class MainFrame extends React.Component {
                                                                 className="col-md-2 border mx-auto"
                                                                 style={{borderRadius: 10, textAlign: "center"}}
                                                             >
-                                                                Subjektiv
+                                                                Subjective
                                                             </div>
                                                             <div
                                                                 id="s5"
                                                                 className="col-md-2 border mx-auto"
                                                                 style={{borderRadius: 10, textAlign: "center"}}
                                                             >
-                                                                Sehr subjektiv
+                                                                Very subjective
                                                             </div>
                                                         </div>
                                                         <a href={"javascript:void(0)"}
-                                                           onClick={showSubjectivitySources}> Einflussreichste Sätze für den
-                                                            Subjektivitätsentscheid? </a>
+                                                           onClick={showSubjectivitySources}> Most influential sentences for the
+                                                            Subjectivity decision? </a>
 
-                                                        <h4 className="my-2"> Polarität </h4>
+                                                        <h4 className="my-2"> Polarity </h4>
                                                         <progress className={"progress"} id="polarityBar"
-                                                                  title={"Auf einer Skala von sehr negativ (0%) bis sehr positiv (100%) ist dieser Text: "}
+                                                                  title={"On a scale from very negative (0%) to very positive (100%), this text is: "}
                                                                   max="100" value="90">
                                                         </progress>
                                                         <div
@@ -993,14 +1017,14 @@ class MainFrame extends React.Component {
                                                                 className="col-md-2 border mx-auto"
                                                                 style={{borderRadius: 10, textAlign: "center"}}
                                                             >
-                                                                Sehr Negativ
+                                                                Very Negative
                                                             </div>
                                                             <div
                                                                 id="p2"
                                                                 className="col-md-2 border mx-auto"
                                                                 style={{borderRadius: 10, textAlign: "center"}}
                                                             >
-                                                                Negativ
+                                                                Negative
                                                             </div>
                                                             <div
                                                                 id="p3"
@@ -1014,61 +1038,61 @@ class MainFrame extends React.Component {
                                                                 className="col-md-2 border mx-auto"
                                                                 style={{borderRadius: 10, textAlign: "center"}}
                                                             >
-                                                                Positiv
+                                                                Positive
                                                             </div>
                                                             <div
                                                                 id="p5"
                                                                 className="col-md-2 border mx-auto"
                                                                 style={{borderRadius: 10, textAlign: "center"}}
                                                             >
-                                                                Sehr positiv
+                                                                Very positive
                                                             </div>
                                                         </div>
-                                                        <a href={"javascript:void(0)"} onClick={showPolaritySources}> Einflussreichste Sätze für den Polaritätsentscheid? </a>
+                                                        <a href={"javascript:void(0)"} onClick={showPolaritySources}> Most influential sentences for the polarity decision? </a>
 
                                                         <h4>Emotionen</h4>
                                                         <progress className={"progress"} id="neutral"
-                                                                  title={"Auf einer Skala von sehr nicht zutreffend (0%) bis sehr zutreffend (100%) ist dieser Text: "}
+                                                                  title={"On a scale from not applicable at all (0%) to very applicable (100%), this text is:"}
                                                                   max="100" value="90"
                                                                   style={{content:"hello"}}>
                                                         </progress>
                                                         <div className="progressbarText">{"Neutral"}</div>
 
                                                         <progress className={"progress"} id="disgust"
-                                                                  title={"Auf einer Skala von sehr nicht zutreffend (0%) bis sehr zutreffend (100%) ist dieser Text: "}
+                                                                  title={"On a scale from not applicable at all (0%) to very applicable (100%), this text is:"}
                                                                   max="100" value="90">
                                                         </progress>
-                                                        <div className="progressbarText">{"Ekel"}</div>
+                                                        <div className="progressbarText">{"Disgust"}</div>
 
                                                         <progress className={"progress"} id="sadness"
-                                                                  title={"Auf einer Skala von sehr nicht zutreffend (0%) bis sehr zutreffend (100%) ist dieser Text: "}
+                                                                  title={"On a scale from not applicable at all (0%) to very applicable (100%), this text is: "}
                                                                   max="100" value="90">
                                                         </progress>
-                                                        <div className="progressbarText">{"Traurigkeit"}</div>
+                                                        <div className="progressbarText">{"Sadness"}</div>
 
                                                         <progress className={"progress"} id="fear"
-                                                                  title={"Auf einer Skala von sehr nicht zutreffend (0%) bis sehr zutreffend (100%) ist dieser Text: "}
+                                                                  title={"On a scale from not applicable at all (0%) to very applicable (100%), this text is: "}
                                                                   max="100" value="90">
                                                         </progress>
-                                                        <div className="progressbarText">{"Angst"}</div>
+                                                        <div className="progressbarText">{"Fear"}</div>
 
                                                         <progress className={"progress"} id="anger"
-                                                                  title={"Auf einer Skala von sehr nicht zutreffend (0%) bis sehr zutreffend (100%) ist dieser Text: "}
+                                                                  title={"On a scale from not applicable at all (0%) to very applicable (100%), this text is: "}
                                                                   max="100" value="90">
                                                         </progress>
-                                                        <div className="progressbarText">{"Wut"}</div>
+                                                        <div className="progressbarText">{"Anger"}</div>
 
                                                         <progress className={"progress"} id="surprise"
-                                                                  title={"Auf einer Skala von sehr nicht zutreffend (0%) bis sehr zutreffend (100%) ist dieser Text: "}
+                                                                  title={"On a scale from not applicable at all (0%) to very applicable (100%), this text is: "}
                                                                   max="100" value="90">
                                                         </progress>
-                                                        <div className="progressbarText">{"Überraschung"}</div>
+                                                        <div className="progressbarText">{"Surprise"}</div>
 
                                                         <progress className={"progress"} id="joy"
-                                                                  title={"Auf einer Skala von sehr nicht zutreffend (0%) bis sehr zutreffend (100%) ist dieser Text: "}
+                                                                  title={"On a scale from not applicable at all (0%) to very applicable (100%), this text is: "}
                                                                   max="100" value="90">
                                                         </progress>
-                                                        <div className="progressbarText">{"Freude"}</div>
+                                                        <div className="progressbarText">{"Joy"}</div>
                                                     </div>
                                                     {/* Feedback on the text */}
                                                     <div className="container-fluid text-center cardtwo my-4">
@@ -1076,7 +1100,7 @@ class MainFrame extends React.Component {
                                                             id="dashboard-h2 my-2"
                                                             style={{fontSize: "x-large"}}
                                                         >
-                                                            Subjektivität/Objektivität{" "}
+                                                            Subjectivity/Objectivity{" "}
                                                         </div>
                                                         <div
                                                             className="text-black-50"
@@ -1088,7 +1112,7 @@ class MainFrame extends React.Component {
                                                             style={{fontSize: "x-large"}}
                                                         >
                                                             {" "}
-                                                            Polarität{" "}
+                                                            Polarity{" "}
                                                         </div>
                                                         <div
                                                             className="text-black-50"
@@ -1100,11 +1124,11 @@ class MainFrame extends React.Component {
                                                     <div className="container-fluid text-center">
                                                         <div className="display-8">
                                                             {" "}
-                                                            Kontaktieren Sie{" "}
+                                                            Contact {" "}
                                                             <a href="mailto:thiemo.wambsganss@epfl.ch">
                                                                 thiemo.wambsganss@epfl.ch
                                                             </a>
-                                                            , wenn Sie weitere Hilfe benötigen.
+                                                            , if you need any further help.
                                                         </div>
                                                         <button
                                                             type={"button"}
@@ -1112,7 +1136,7 @@ class MainFrame extends React.Component {
                                                             id="reload-page"
                                                             onClick={refreshPage}
                                                         >
-                                                            <span>Neu starten</span>
+                                                            <span>Start again</span>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -1127,21 +1151,19 @@ class MainFrame extends React.Component {
 
                     {/*scrollbox end*/}
                     <div id="privacy">
-                        <h3>Einverständniserklärung</h3>
-                        <p>Bitte lesen Sie die Einwilligungserklärung sorgfältig durch.</p>
+                        <h3>Declaration of consent</h3>
+                        <p>Please read the consent form carefully.</p>
                         <p>
-                            Ich bin damit einverstanden, dass der Inhalt meiner Nachrichten an den Chatbot zum Zweck der
-                            Sprachverarbeitung an Universitätsserver gesendet wird. Ich bin außerdem damit
-                            einverstanden, dass meine anonymisierten Daten für wissenschaftliche Zwecke genutzt werden
-                            können. Mir ist bekannt, dass ich meine Einwilligung jederzeit widerrufen kann.
+                            I consent that the content of my messages with the chatbot will be  sent to university
+                            servers for the purpose of the speech processing. I also agree that my anonymize data
+                            may be used for scientific purposes. I am aware that I can revoke my consent at any time.
                         </p>
                         <p>
-                            Wir versichern volle Anonymität - eine Zuordnung der gesammelten Datenpunkte zu einzelnen
-                            Teilnehmern ist nicht möglich.
+                            We assure full anonymity - an allocation of the collected data points to individual participants is not possible.
                         </p>
                         <p>
-                            Wenn Sie Fragen zur Verwendung Ihrer Daten haben, können Sie sich an die Organisatoren der
-                            Umfrage unter den folgenden Kontaktdaten wenden:
+                            If you have any questions about the use of your data, you can contact the organisers of the
+                            survey at the following contact details:
                         </p>
                         <p>
                             <a href="mailto:thiemo.wambsganss@epfl.ch">thiemo.wambsganss@epfl.ch</a>
@@ -1153,18 +1175,18 @@ class MainFrame extends React.Component {
                                 className="button button-primary"
                                 onClick={() => {
                                     hidePrivacy();
-                                    initializeBot(this.updateChatBoxContent);
+                                    initializeBot(this.updateChatBoxContent, this.state.chatGPTColor);
                                 }}
                             >
-                                Ich bin damit einverstanden.
+                                I consent.
                             </button>
                         </p>
                     </div>
                     <div id="feedback">
-                        <h3> Der WritingTutor würde sich über ein Feedback freuen!</h3>
+                        <h3> The WritingTutor would be pleased to receive your feedback!</h3>
                         <form id="feedback-form">
                             <div>
-                                <p> Wie zufrieden waren Sie mit der Nutzung? </p>
+                                <p> How satisfied are you with the usage? </p>
                                 <fieldset className="rating">
                                     <input
                                         type="radio"
@@ -1206,25 +1228,25 @@ class MainFrame extends React.Component {
                             <div>
                                 <p>
                                     {" "}
-                                    Was halten Sie von WritingTutor? Ist es ein nützliches Werkzeug, um
-                                    Fragen zu klären?{" "}
+                                    What do you think of WritingTutor? Is it a useful tool to
+                                    clarify questions?{" "}
                                 </p>
                                 <p>
                         <textarea
                             type="text"
                             id="feedback-text"
-                            placeholder="Bitte schreiben Sie mindestens 2 kurze Sätze."
+                            placeholder="Write at least two short sentences, please."
                             defaultValue={""}
                         />
                                 </p>
                             </div>
                             <div>
-                                <p> Was könnte noch verbessert werden? (Fakultativ)</p>
+                                <p> What could still be improved? (Optional)</p>
                                 <p>
                         <textarea
                             type="text"
                             id="feedback-improve"
-                            placeholder="Schreiben Sie hier Ihre Verbesserungsvorschläge..."
+                            placeholder="Write here your suggestions for the improvement..."
                             defaultValue={""}
                         />
                                 </p>
@@ -1233,27 +1255,25 @@ class MainFrame extends React.Component {
                                 <button type={"button"} className="button button-primary" id="feedback-submit"
                                         onClick={feedbackSubmitButtonClick}>
                                     <i className="fa fa-check"/>
-                                    <span>Feedback abgeben</span>
+                                    <span>Submit</span>
                                 </button>
                             </p>
                         </form>
                     </div>
                     <div id="help">
-                        <h1>Hilfe</h1>
+                        <h1>Help</h1>
                         <div>
-                            <h4>Probleme mit dem WritingTutor?</h4>
+                            <h4>Problems with the WritingTutor?</h4>
                             <p>
                                 {" "}
-                                Wenn Sie nicht weiterkommen oder das Gefühl haben, dass WritingTutor
-                                nicht antwortet, versuchen Sie, ''Einführung'' in das Chat-Feld
-                                einzugeben. Alternativ können Sie auch die Seite mit WritingTutor neu
-                                laden.
+                                If you get stuck or feel that WritingTutor is not answering try typing ''Introduction''
+                                in the chat box. Alternatively, you can also reload the page.
                             </p>
-                            <p>Benötigen Sie weitere Unterstützung? </p>
+                            <p>Do you need further support? </p>
                             <p>
                                 {" "}
-                                Wenn ja, wenden Sie sich an Thiemo Wambsganss unter der folgenden
-                                E-Mail-Adresse:
+                                If so, please contact Thiemo Wambsganss at the following
+                                e-mail address:
                             </p>
                             <p>
                                 <a href="mailto:thiemo.wambsganss@epfl.ch">
@@ -1265,61 +1285,53 @@ class MainFrame extends React.Component {
                     <div id="Detail">
                         <h1>FAQ</h1>
                         <div>
-                            <h4>Was kann der WritingTutor tun?</h4>
+                            <h4>What can the WritingTutor do?</h4>
                             <p>
                                 {" "}
-                                Ab sofort ist WritingTutor darauf geschult, Sie beim argumentativen
-                                Schreiben zu unterstützen und Ihre strukturierten Argumente auf ihre
-                                Stimmigkeit hin zu analysieren. Mit den zur Verfügung gestellten
-                                Theorien werden Sie in die Lage versetzt, die Grundlagen des
-                                argumentativen Schreibens zu erlernen, während die Textanalyse Ihnen
-                                ein direkt zugängliches Feedback gibt, das Sie an Ihre eigenen
-                                Vorlieben anpassen können.
+                                WritingTutor is trained to support you in the argumentative
+                                writing and to analyse the coherence of the structure of your arguments.
+                                You will be able to learn the basics of argumentative
+                                writing with the theories provided. The text analysis will give you direct
+                                feedback that you can adapt to your own preferences.
                             </p>
-                            <h4>Wie sollte ich WritingTutor verwenden?</h4>
+                            <h4>How should I use the WritingTutor?</h4>
                             <p>
                                 {" "}
-                                WritingTutor bietet Ihnen die Möglichkeit, in Ihrem eigenen Tempo zu
-                                lernen. Sie können sich die Theorien so oft ansehen, wie Sie möchten,
-                                und wenn Sie sich bereit fühlen, können Sie Ihren Text analysieren
-                                Ihren Text analysieren und ihn so oft wiederholen, wie Sie möchten.
-                                WritingTutor schreibt Ihnen keinen Lernprozess vor, sondern gibt Ihnen
-                                die Möglichkeit, Ihren Lernprozess nach Ihren Wünschen anzupassen. Die
-                                vordefinierten Buttons ermöglichen es Ihnen zudem, einfach durch die
-                                verschiedenen Lerneinheiten zu navigieren. So können Sie den
-                                WritingTutor so nutzen, wie es Ihnen am besten passt. Wenn Sie noch
-                                weitere Unterstützung benötigen, können Sie jederzeit den Hilfebereich
-                                aufsuchen, um weitere Hilfe zu erhalten.{" "}
+                                WritingTutor offers you the opportunity to learn at your own pace.
+                                You are free to consult the theory at any time, also during the writing.
+                                Once you have finished the writing, WritingTutor will analyze your outcome.
+                                You revise the evaluation as many times as you like.
+                                WritingTutor does not prescribe a learning process for you, but gives you
+                                the possibility to adapt your learning process according to your wishes. The
+                                buttons allow you to navigate easily through the different learning units.
+                                 This way you can use the WritingTutor in the way that suits you best. If you need
+                                need further support, you can always go to the help area.{" "}
                             </p>
-                            <h4>Wie funktioniert der WritingTutor?</h4>
+                            <h4>How does the WritingTutor work?</h4>
                             <p>
                                 {" "}
-                                WritingTutor verwendet eine vordefinierte Bibliothek von textlichen
-                                und visuellen Inhalten, um Ihnen Wissen über argumentatives Schreiben
-                                zu vermitteln. Darüber hinaus wird die Analyse Ihres Textes mit Hilfe
-                                der TextBlob-Bibliothek durchgeführt. TextBlob ist ein beliebtes
-                                Werkzeug für die Verarbeitung natürlicher Sprache. WritingTutor wurde
-                                im Rahmen einer Masterarbeit von Jiir Awdir entwickelt und die
-                                Dokumentation sowie der Code sind in der Masterarbeit zu finden.{" "}
+                                WritingTutor uses a predefined library of textual and visual
+                                content to teach you about argumentative writing.
+                                In addition, the analysis of your text is carried out with the help of the TextBlob library.
+                                The latest is a popular tool for natural language processing. WritingTutor was
+                                developed as part of a master's thesis by Jiir Awdir and the
+                                documentation and code can be found in the master's thesis.{" "}
                             </p>
-                            <h4>Was ist eine Stimmungsanalyse?</h4>
+                            <h4>What is sentiment analysis?</h4>
                             <p>
                                 {" "}
-                                Eine Stimmungsanalyse (z. B. auch Emotion AI genannt) verwendet
-                                natürliche Sprachverarbeitung, Textanalyse und weitere linguistische
-                                Werkzeuge, um einen Text zu identifizieren, zu analysieren, zu
-                                strukturieren und einen gegebenen Text in seinen Gefühlszustand zu
-                                kategorisieren. Dies beinhaltet die Kategorisierung der Polarität und
-                                der Subjektivität, die beide den den Gefühlszustand Ihres Textes
-                                ausmachen. Mit diesen Informationen können Sie Ihren Text nach Ihren
-                                Vorlieben anpassen.{" "}
+                                A sentiment analysis (e.g. also called Emotion AI) uses
+                                natural language processing, text analysis and further linguistic
+                                tools to identify, analyse and structure a given text into its emotional state.
+                                This includes the categorisation of the polarity and
+                                subjectivity, both of which constitute the emotional state of your text.{" "}
                             </p>
-                            <h4>Wurden Ihre Fragen beantwortet? </h4>
+                            <h4>Have your questions been answered? </h4>
 
                             <p>
                                 <a href="mailto:thiemo.wambsganss@epfl.ch">
-                                    Wenn nicht, kontaktieren Sie Thiemo Wambsgans, um weitere
-                                    Informationen zu erhalten:
+                                    If not, contact Thiemo Wambsganss to obtain further
+                                    information:
                                 </a>
                             </p>
                         </div>
@@ -1331,7 +1343,7 @@ class MainFrame extends React.Component {
                     <div id="ELEAIframeTemplate">
                         <form method="post" >
                             <label style={{display: "block", fontSize: "x-large"}}>
-                                Evaluations-Textfeld
+                                Evaluations-Text box
                             </label>
                             <div className="w3-display-left">
                                 <div className="ehi-wordcount-container">
@@ -1355,7 +1367,7 @@ class MainFrame extends React.Component {
                                         cols={25}
                                         name="evaluationText"
                                         id="evalution_textarea"
-                                        placeholder="Text hier eingeben..."
+                                        placeholder="Enter your text here..."
                                         onKeyUp={this.updateEssayStats}
                                         style={{
                                             resize: "none",
@@ -1376,23 +1388,23 @@ class MainFrame extends React.Component {
                                         >
                                             <div className="output row" style={{marginLeft: "-1rem"}}>
                                                 <div>
-                                                    Zeichen: <span id="characterCount">0</span>
+                                                    Characters: <span id="characterCount">0</span>
                                                 </div>
                                                 <div>
-                                                    Wörter: <span id="wordCount">0</span>
-                                                </div>
-                                            </div>
-                                            <div className="output row" style={{marginLeft: "-1rem"}}>
-                                                <div>
-                                                    Sätze: <span id="sentenceCount">0</span>
-                                                </div>
-                                                <div>
-                                                    Paragraphen: <span id="paragraphCount">0</span>
+                                                    Words: <span id="wordCount">0</span>
                                                 </div>
                                             </div>
                                             <div className="output row" style={{marginLeft: "-1rem"}}>
                                                 <div>
-                                                    Lesezeit: <span id="readingTime">0</span>
+                                                    Sentences: <span id="sentenceCount">0</span>
+                                                </div>
+                                                <div>
+                                                    Paragraphs: <span id="paragraphCount">0</span>
+                                                </div>
+                                            </div>
+                                            <div className="output row" style={{marginLeft: "-1rem"}}>
+                                                <div>
+                                                    Reading time: <span id="readingTime">0</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1401,7 +1413,7 @@ class MainFrame extends React.Component {
                                             style={{display: "inline-block", width: "49%"}}
                                         >
                                             <div className="keywords" style={{marginRight: "-1rem"}}>
-                                                Top Schlüsselwörter
+                                                Top keywords
                                                 <ul id="topKeywords"></ul>
                                             </div>
                                         </div>
@@ -1424,7 +1436,7 @@ class MainFrame extends React.Component {
                             id="textInput"
                             type="text"
                             name="msg"
-                            placeholder="Geben Sie Ihre Frage hier ein..."
+                            placeholder="Type your question here..."
                             autoFocus
                             onKeyUp={keyUpTextInput}
                         />
@@ -1444,4 +1456,4 @@ class MainFrame extends React.Component {
     }
 }
 
-export {MainFrame}
+export {MainFrameEn}
