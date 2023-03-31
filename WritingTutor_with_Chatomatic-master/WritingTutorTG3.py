@@ -16,6 +16,13 @@ import EvaluationHandler
 
 import nltk
 
+import openai
+
+OPENAIKEY = "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"
+openai.api_key = OPENAIKEY
+# openai.organization =
+
+
 nltk.download("punkt")
 
 # import timer
@@ -80,7 +87,7 @@ if now.minute < 10:
 chatBotDate = strftime("%d.%m.%Y, %H:%M", localtime())
 chatBotTime = strftime("%H:%M", localtime())
 
-chatomatic = Chatomatic("data/Dialogues.yml", language="de")
+chatomatic = Chatomatic("data/DialoguesEN.yml", language="de")
 
 
 ## Google fallback if response == IDKresponse
@@ -106,23 +113,42 @@ def writeCsv(filePath, data):
 def home_emma():
     return render_template("index.html")
 
+MODEL = "gpt-3.5-turbo"
 
 ## Flask route for getting bot responses
 @application.route("/getResponse", methods=["GET"])
 def get_bot_response():
     userText = str(request.args.get("msg"))
-    try:
-        botReply = str(chatomatic.answer(userText, "de", "transformers"))
-    except Exception as e:
-        print(e)
+    gpt = str(request.args.get("gpt"))
+    # todo if initialization do not send text to chatgpt
+    if gpt == "true" and "StartGPT" not in userText:
 
-    if botReply == "IDKresponse":
-        if useGoogle == "yes":
-            botReply = botReply + tryGoogle(userText)
-    elif botReply == "getTIME":
-        botReply = getTime()
-    elif botReply == "getDATE":
-        botReply = getDate()
+        botReply = openai.ChatCompletion.create(
+            model=MODEL,
+            messages=[
+                {"role": "system", "content": "You are a tutor that helps students to write argumentative essay."},
+                {"role": "user", "content": userText},
+            ]
+        )
+        botReply = botReply['choices'][0]['message']['content']
+        print(botReply)
+        print("botReply-------------")
+
+    else:
+        try:
+            botReply = str(chatomatic.answer(userText, "transformers"))
+            # botReply = str(chatomatic.answer(userText, "de", "transformers"))
+        except Exception as e:
+            print("EXcpetion")
+            print(e)
+
+        if botReply == "IDKresponse":
+            if useGoogle == "yes":
+                botReply = botReply + tryGoogle(userText)
+        elif botReply == "getTIME":
+            botReply = getTime()
+        elif botReply == "getDATE":
+            botReply = getDate()
 
     writeCsv(currentPath + "/log/botLog.csv", [userText, botReply])
 
@@ -170,18 +196,6 @@ def receive_text():
     ascending_sentence_subjectivities = EvaluationHandler.__get_asc_subjectivity_per_sentence(sentences)
     emotions = EvaluationHandler.__get_emotion(translated_text)
 
-    # jsonify({"success": True}, 200, {"ContentType": "application/json"})
-
-    # return {
-    #     "subjectivity": sub,
-    #     "polarity": pol,
-    #     "summary": summary,
-    #     "text": received_text,
-    #     "pol_per_sentence": ascending_sentence_polarities,
-    #     "sub_per_sentence": ascending_sentence_subjectivities,
-    #     "emotions": emotions
-    # }
-
     data = {
         "subjectivity": sub,
         "polarity": pol,
@@ -199,7 +213,7 @@ def receive_text():
 
 ## Python Flask startup
 if __name__ == "__main__":
-    application.run(host="127.0.0.1", port=FLASK_PORT, debug=True)
+    application.run(host="127.0.0.1", port=FLASK_PORT)
 
     # for i in range(0, 1000000):
     #     time.sleep(1000000)

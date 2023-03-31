@@ -19,7 +19,7 @@ config = {
     "blob_only": True,
     "custom_blob": {"@misc": "spacytextblob.de_blob"}
 }
-
+# todo add nlp EN
 nlp_de = spacy.load("de_core_news_sm")
 nlp_de.add_pipe("spacytextblob", config=config)
 
@@ -40,6 +40,7 @@ def __sentences(text):
 
 
 def __get_summary(text):
+    # todo switch between languages, create default one in english
     tokenizer = AutoTokenizer.from_pretrained("Einmalumdiewelt/T5-Base_GNAD")
     model = AutoModelForSeq2SeqLM.from_pretrained("Einmalumdiewelt/T5-Base_GNAD")
 

@@ -26,7 +26,7 @@ def getTime():
     # if now.hour > 12:
     #    hour = str(now.hour - 12)
     weekday = calendar.day_name[mydate.weekday()]
-    return "Es ist " + hour + ":" + minute + " Uhr"
+    return "It is  " + hour + ":" + minute + " o'clock"
 
 
 def getDate():
@@ -38,7 +38,7 @@ def getDate():
     minute = str(now.minute)
     second = str(now.second)
     weekday = now.weekday()
-    week = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
+    week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     #    year = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
     day = str(dd);
     if dd == 1:
@@ -46,10 +46,10 @@ def getDate():
     else:
         day += '.'
     weekdayName = week[weekday]
-    return "Heute ist " + weekdayName + " der " + day + mm + "." + yyyy
+    return "Today is  " + weekdayName + " of  " + day + mm + "." + yyyy
 
 
 ##print("Hello there!") Obi Wan Kenobi referenz ;)
-print("Hallo!")
+print("Hello!")
 print(getTime())
 print(getDate())

@@ -14,12 +14,12 @@
 6. Server stoppen: Strg+C
 
 *Änderungen an dialog.yml:*
-1. Änderung durchführen und speichern
-2. Zeile #bot.storage.drop() einkommentieren
-3. Server starten: python3 EvaluationBot.py
-4. Server stoppen: Strg+C
-5. Zeile bot.storage.drop() auskommentieren
-6. Server starten: python3 EvaluationBot.py
+1. Änderung durchführen und speichern; Make change and save
+2. Zeile #bot.storage.drop() einkommentieren; Comment in line #bot.storage.drop()
+3. Server starten: python3 EvaluationBot.py; Start server: python3 EvaluationBot.py
+4. Server stoppen: Strg+C; Stop server: Ctrl+C
+5. Zeile bot.storage.drop() auskommentieren; Comment out line bot.storage.drop()
+6. Server starten: python3 EvaluationBot.py; Start server: python3 EvaluationBot.py
 
 *Auf Python Anywhere installieren*
 1. Einloggen
