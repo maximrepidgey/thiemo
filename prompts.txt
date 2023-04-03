@@ -1,0 +1,4 @@
+evaluation:
+rate this essay from argumentative point of view: "<essay>"; very instable, generates opposite answers
+evaluate this essay, state if it has a good argumentative structure and the strength of the arguments: "<essay>"; good results, general feedback + argumentative
+Provide a feedback of this essay: "<essay>". Moreover, state if it has a good argumentative structure and what can be improved 

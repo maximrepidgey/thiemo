@@ -3,6 +3,7 @@ import torch
 import nltk
 from spacytextblob.spacytextblob import SpacyTextBlob
 from textblob_de import TextBlobDE
+from textblob import TextBlob
 
 from googletrans import Translator
 
@@ -10,21 +11,21 @@ from transformers import pipeline
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 
-@spacy.registry.misc("spacytextblob.de_blob")
-def create_de_blob():
-    return TextBlobDE
+# @spacy.registry.misc("spacytextblob.de_blob")
+# def create_de_blob():
+#     return TextBlobDE
 
 
-config = {
-    "blob_only": True,
-    "custom_blob": {"@misc": "spacytextblob.de_blob"}
-}
-# todo add nlp EN
-nlp_de = spacy.load("de_core_news_sm")
-nlp_de.add_pipe("spacytextblob", config=config)
+
+# config = {
+#     "blob_only": True,
+#     "custom_blob": {"@misc": "spacytextblob.de_blob"}
+# }
+# NLP for german text
+# nlp_de = spacy.load("de_core_news_sm")
+# nlp_de.add_pipe("spacytextblob", config=config)
 
 # for google translate:
-# todo fixing
 translator = Translator()
 # from google_trans_new import google_translator
 # translator = google_translator()
@@ -36,7 +37,7 @@ emotion_classifier = pipeline("text-classification", model="j-hartmann/emotion-e
 
 
 def __sentences(text):
-    return TextBlobDE(text).sentences
+    return TextBlob(text).sentences
 
 
 def __get_summary(text):
@@ -108,12 +109,13 @@ def __get_asc_polarity_per_sentence(sentences):
 def __get_asc_subjectivity_per_sentence(sentences):
     subjectivities = set()
     for sentence in sentences:
-        subjectivities.add((sentence.string, nlp_en(__translate_to_english(sentence.string))._.blob.subjectivity))
+        subjectivities.add((sentence.string, nlp_en(sentence.string)._.blob.subjectivity))
+        # subjectivities.add((sentence.string, nlp_en(__translate_to_english(sentence.string))._.blob.subjectivity))
 
     subjectivities_asc = sorted(subjectivities, key=lambda x: x[1])
     return subjectivities_asc
 
 
 def __get_polarity(text):  # returns float in  [-1.0, 1.0]
-    doc = nlp_de(text)
+    doc = nlp_en(text)
     return doc._.blob.sentiment.polarity

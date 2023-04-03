@@ -27,14 +27,8 @@ conversations:
     - "What day is today?"
     - getDATE
   -
-    - Datum
-    - getDATE
-  -
     - Zeit
     - getTIME
-  -
-    - Nichts
-    - "Could you please try again?"
   -
     - Thanks
     - "Glad I could help you!"
@@ -69,7 +63,7 @@ conversations:
     - Are you funny?
     - "I think so &#129322;"
   -
-    - Was können Sie tun?
+    - What can I do?
     - "<p>I'm glad you asked that. I was programmed to help you write great argumentative texts by providing you with sentiment analysis. &#128522;</p>
           <p> Depending on the desired writing style, it is important to keep the overall mood of your essay in mind. You can learn more about this in the theory.
           <p> Often students simply forget to consciously use positive/negative or subjective elements in their essays. Your essay can become too one-sided by being too positive or negative, or it can become too subjective or objective.
@@ -93,7 +87,7 @@ conversations:
               The results of my analysis and my theoretical inputs will hopefully help you to write even more convincing arguments! </p>
     <p>I am still in training, but I will do my best to help you! Try using the buttons to navigate through the learning environment. &#128515; </p>
     <h4> Learning </h4>
-    <button class=\"chatSuggest\" onclick=\"chatSuggest('I would like to learn more about the importance of the basic mood in my argumentation');\">I would like to learn more about the importance of the basic mood in my argumentation</button>
+    <button class=\"chatSuggest\" onclick=\"chatSuggest('I would like to learn more about the importance of the argumentation');\">I would like to learn more about the importance of the argumentation</button>
     <h4> More information </h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('How can you help me, Writing Tutor?');\">How can you help me, Writing Tutor?</button>
     <h4> Evaluation </h4>
@@ -107,7 +101,7 @@ conversations:
       <p>Currently, you are using embedded chatGPT dialogue. It is experimental option. This option works as pure conversation model... just ask questions like with human
       Feel free to switch between chatbots. &#128515; </p>"
   -
-    - I want to learn more about the importance of feelings in my argumentation
+    - I want to learn more about the importance of the argumentation
     - "<p>Very good! What do you want to deal with first? &#129299;</p>
     <p>If you have questions about how to make your writing more persuasive, or if you want to learn more about argumentation in general, you've come to the right place!</p>
     <h4>Theoretical overview</h4>
@@ -151,7 +145,7 @@ conversations:
     <h4> Evaluation </h4>
           <button class=\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Are you ready? Start evaluation</button>"
   -
-    - Starte evaluation process
+    - Start the evaluation process
     - "<p>I would like to briefly explain how WritingTutor analyses your essay and argumentation skills. </p>
               <p>To analyse and score your essay, you need to type the whole essay into the text box that appears when you click on ''Open text box''.
    <p>Your task: <i> Your friend wants to go to the USA for a year. However, he has some concerns about this. </i> </p>
@@ -236,7 +230,7 @@ conversations:
            <p>Here is a great video that goes into more detail. </p>
     <button class=\"chatSuggest\" onclick=\"playVideo('_bO68Yhl9is');return false;\">Video: different types of arguments</button>
     <h4>Theoretical overview</h4>
-    <button class=\"chatSuggest\" onclick=\"chatSuggest('Could you tell me about the different parts of argumentative essays?');\">Structuring an argument</button>
+    <button class=\"chatSuggest\" onclick=\"chatSuggest('Could you tell me about the different parts of argumentative essay?');\">Could you tell me about the different parts of argumentative essay?</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('I want to learn more about the basics of argumentation');\">Back</button>
     <h4> Evaluation </h4>
              <button class=\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Are you ready? Start evaluation</button>"
@@ -255,7 +249,7 @@ conversations:
     <p>There are really great videos that you can learn a lot from. Here is a good video:</p>
         <h4>Learning material</h4>
     <button class=\"chatSuggest\" onclick=\"playVideo('SKlhoKT8ApM');return false;\">Video: Structure of an argument</button>
-    <h4>Theoretischer Überblick</h4>
+    <h4>Theoretical overview</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Could you explain more about the structure of arguments?');\">Structure of the argument</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('I want to learn more about the basics of argumentation');\">Back</button>
     <h4> Evaluation </h4>
