@@ -277,7 +277,6 @@ class MainFrameEn extends React.Component {
 
     chatGPT = async () => {
         // if active reset to predefined bot (red)
-        // todo pass parameter to .answer function (that send to backend)
         if (this.state.chatGPTColor) {
             document.documentElement.style.setProperty("--main-color", "#b51f1f")
             // show instructions about using normal bot
@@ -616,6 +615,7 @@ class MainFrameEn extends React.Component {
         /**
          * Sends evaluation request to the backend and then displays the corresponding Dashboard with the results
          */
+        // todo create evaluation method for chatGPT
         const evaluationChatSuggest = () => {
             let submittedText = document.getElementById("evalution_textarea").value;
 
@@ -647,7 +647,7 @@ class MainFrameEn extends React.Component {
                     reject(new Error('Request timed out'));
                 }, 25000); // Timeout after 25 seconds
             });
-
+            // use race method in order to check what happens first, response from the bot or timeout
             Promise.race([fetch(CHATBOT_URL + "/texttransfer", {
                     method: "POST",
                     headers: {
@@ -1426,7 +1426,7 @@ class MainFrameEn extends React.Component {
                             id="button-eval"
                             onClick={evaluationChatSuggest}
                         >
-                            Text bewerten
+                            Evaluate the text
                         </button>
                     </div>
 
@@ -1438,6 +1438,7 @@ class MainFrameEn extends React.Component {
                             name="msg"
                             placeholder="Type your question here..."
                             autoFocus
+                            autoCorrect={true}
                             onKeyUp={keyUpTextInput}
                         />
                         <button id="buttonInput" onClick={sendText}>
@@ -1446,10 +1447,7 @@ class MainFrameEn extends React.Component {
                     </div>
                 </div>
 
-                <link
-                    rel="stylesheet"
-                    href="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.css"
-                />
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mdbassit/Coloris@latest/dist/coloris.min.css"/>
             </div>
 
         );

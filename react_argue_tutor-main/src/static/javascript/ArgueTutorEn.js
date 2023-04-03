@@ -150,14 +150,21 @@ function getBotResponse(text, gpt, updateChatBoxContent) {
  * @returns {null}
  */
 function getResponse(text, gpt, updateChatBoxContent) {
-    //todo add param
     console.log(text)
-    fetch(CHATBOT_URL + "/getResponse?gpt=" + gpt + "&msg=" + text,
+    /*fetch(CHATBOT_URL + "/getResponse?gpt=" + gpt + "&msg=" + text,
         {
             method: "GET",
             headers: {
                 "Content-Type": "application/json;charset=UTF-8"
             },
+        })*/
+    fetch(CHATBOT_URL + "/getResponse",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({gpt: gpt, text: text})
         })
         .then(response => {
             return response.json()
@@ -170,7 +177,7 @@ function getResponse(text, gpt, updateChatBoxContent) {
 
 function getSmalltalkResponse(text, gpt, andThen) {
     if (text.includes("joke") || text.includes("gag") || text.includes("wit") || text.includes("fun")) { // tell joke
-        text = "Erzähl mir einen Witz";
+        text = "joke";
     }
 
     let response = getResponse(text, gpt, andThen);
