@@ -1,7 +1,9 @@
 import Swal from "sweetalert";
 
 
+let IDKcounter = 0;
 
+let evaluationRunning = false;
 
 const CHATBOT_URL = "http://127.0.0.1:8006";
 export {CHATBOT_URL}
@@ -31,10 +33,10 @@ export {ready}
 function initializeBot(gpt) {
     if (gpt) {
         // getResponse("StartGPT", gpt, updateChatBoxContentThis);
-        // getResponse("StartGPT", gpt);
+        getResponse("StartGPT", gpt);
     } else {
         // getResponse("Introduction", gpt, updateChatBoxContentThis);
-        // getResponse("Introduction", gpt);
+        getResponse("Introduction", gpt);
     }
 }
 export {initializeBot}
@@ -53,6 +55,192 @@ function getTime() {
 
 export {getTime}
 
+
+/**
+ * Adds chatbot message to the chatbox.
+ *
+ * @param text
+ *          bot message
+ * @param updateChatBoxContent
+ *          function to update the chatbox content
+ */
+function addBotMessage(text, updateChatBoxContent) {
+    if (text === null) return;
+
+    let botHtml =
+        '<div class="message">' +
+            '<div class="message-botname">WritingTutor</div>' +
+            '<div class="botText">' +
+                '<div class="avatar-wrapper">' +
+                    '<img alt="avatar" class="avatar" src="/img/ArgueTutor.png">' +
+                '</div>' +
+                '<div class="data-wrapper">' + text +'</div>' +
+            '</div>' +
+        '<div class="message-time">' + getTime() + '</div></div>';
+
+    updateChatBoxContent(botHtml);
+
+    document.getElementById("buttonInput").disabled = false;
+    document.getElementById("textInput").disabled = false;
+    document.getElementById("textInput").focus();
+}
+
+/**
+ * Adds user message to the chatbox
+ *
+ * @param text
+ *          user message
+ * @param updateChatBoxContent
+ *          function to update the chatbox
+ */
+function addUserMessage(text, updateChatBoxContent) {
+    if (text === null) return;
+
+    let userHtml;
+    if (text.toString() === "Bewertung") {
+        userHtml = '<div class="message"><p class="userText eval">' + text + '</p></div>';
+    } else {
+        userHtml = '<div class="message"><p class="userText">' + text + '</p></div>';
+    }
+
+    // to add typing message of the chatbot
+    userHtml += '<div class="message typing"><div class="message-botname">WritingTutor</div><div class="botText"><div class="avatar-wrapper"><img class="avatar" src="/img/ArgueTutorClosed.png"></div><div class="data-wrapper"><img src="/img/typing3.gif"></div></div></div>';
+
+    updateChatBoxContent(userHtml);
+}
+
+const IDK_REPLY = "I did not understand";
+const EMAIL_RESULT = "open E-Mail";
+
+/**
+ * requests response from backend
+ *
+ * @param text
+ *          question
+ * @param updateChatBoxContent
+ *          method to update the chatbox with the bots response
+ */
+function getBotResponse(text, gpt, updateChatBoxContent) {
+    text = text.toLowerCase(); // convert input text to lowercase
+
+    // restart evaluation
+    if (text.toLowerCase().includes("neustart")) {
+        getResponse("Introduction", gpt, updateChatBoxContent);
+        return;
+    }
+
+    getSmalltalkResponse(text, gpt, (response) => {
+
+        if (response.includes("IDKresponse")) {
+            updateChatBoxContent(getIDKResponse(gpt, updateChatBoxContent));
+        } else {
+            updateChatBoxContent(response);
+        }
+    });
+}
+
+
+/**
+ * get response from python chatterbot backend and update the chatbox with the received answer
+ * @param text
+ *          request of the user
+ * @param gpt
+ *          boolean if chatgpt option is activated
+ * @param updateChatBoxContent
+ *          function to update the chatbox (takes the html response as parameter)
+ * @returns {null}
+ */
+function getResponse(text, gpt, updateChatBoxContent) {
+    console.log(text)
+    // solves the issue of using this function in the main frame
+    /*if (text === "StartGPT" || text === "Introduction") {
+        updateChatBoxContent = updateChatBoxContentThis
+    }*/
+    fetch(CHATBOT_URL + "/getResponse",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({gpt: gpt, text: text})
+        })
+        .then(response => {
+            return response.json()
+        })
+        .then(data => {
+            let botReply = data.botReply;
+            addBotMessage(botReply, updateChatBoxContent);
+        });
+}
+
+function getSmalltalkResponse(text, gpt, andThen) {
+    if (text.includes("joke") || text.includes("gag") || text.includes("wit") || text.includes("fun")) { // tell joke
+        text = "joke";
+    }
+
+    let response = getResponse(text, gpt, andThen);
+    // interrupt/smalltalk
+    if (evaluationRunning) {
+    }
+    return response;
+}
+
+/**
+ * Returns the IDK reply from the backend or writing an email if idk responses are more than 2.
+ **/
+function getIDKResponse(gpt, updateChatBoxContent) {
+    IDKcounter++; // count IDK
+    let botReply;
+    if (IDKcounter < 2) {
+        botReply = getResponse(IDK_REPLY, gpt, updateChatBoxContent);
+    } else { // reply with email suggestion after 2 attempts
+        botReply = getResponse(EMAIL_RESULT, gpt, updateChatBoxContent);
+    }
+    return botReply;
+}
+
+/**
+ * submits message to the backend
+ *
+ * @param text
+ *          message to submit
+ * @param updateChatBoxContent
+ *          method to update the chatbox content
+ */
+function submitMessage(text, gpt, updateChatBoxContent) {
+    if (text.trim() === "") {
+        return;
+    }
+
+    addUserMessage(text, updateChatBoxContent);
+    document.getElementById("textInput").value = ""
+    document.getElementById("buttonInput").disabled = true;
+    document.getElementById("textInput").disabled = true;
+
+    getBotResponse(text, gpt, updateChatBoxContent);
+}
+
+export {submitMessage}
+
+
+/**
+ * handles chat suggest calls from user
+ *
+ * @param chatBot
+ *          current chatbot
+ * @param text
+ *          user message
+ */
+function chatSuggestCall(chatBot, gpt, text) {
+    const elems = document.getElementsByClassName('chatSuggest');
+    for (const elem of elems) {
+        elem.disabled = true
+    }
+
+    document.getElementById("textInput").value = text;
+    submitMessage(text, gpt, chatBot.updateChatBoxContent);
+}
+export {chatSuggestCall}
 
 
 

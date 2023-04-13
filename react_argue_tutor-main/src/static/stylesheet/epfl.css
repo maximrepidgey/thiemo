@@ -99,16 +99,34 @@ h5 {
   text-align: right;
 }
 
+.column {
+  flex-basis: 50%;
+  width: 50vw;
+}
+
+.columns {
+  display: flex;
+  /*flex-wrap: wrap;*/
+  margin: 0 auto;
+  /*max-width: 50vw;*/
+  /*padding: 20px;*/
+}
+
 .chatbot {
   display: block;
-  width: 800px;
-  /*height: calc(100vh - 50px);*/
-  height: calc(100vh - 100px);
+  /*width: 800px;*/
+  /*width: 100%;*/
+  /*height: calc(100vh - 100px);*/
+  height: 100vh;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 50px;
-  box-shadow: 0px 0px 36px -3px rgba(0, 0, 0, 0.5);
-  border-radius: 10px;
+  /*margin-top: 50px;*/
+  /*box-shadow: 0 0 36px -3px rgba(0, 0, 0, 0.5);*/
+  /*border-radius: 10px;*/
+
+  /*display: flex;*/
+  /*flex-wrap: wrap;*/
+  /*padding: 20px;*/
 }
 
 .header {
@@ -117,7 +135,6 @@ h5 {
   height: 64px;
   background-color: var(--main-color);  /* #b51f1f; */
   color: #ffffff;
-  border-radius: 10px 10px 0 0;
 }
 
 .header-logo {
@@ -206,12 +223,27 @@ h5 {
   display: block;
   position: relative;
   width: 100%;
-  height: calc(100vh - 100px - 64px - 50px);
+  height: calc(100vh - 64px - 50px);
+  /*height: calc(100vh - 100px - 64px - 50px);*/
   overflow-y: auto;
 }
 
-#feedback, #privacy, #answers, #help, #dashboard, #Detail, #ELEAIframeTemplate {
+
+#ELEAIframeTemplate {
+  /*width: 100vw; will get max screen*/
+  display: inline-block;
+  width: 100%;
+  height: calc(100vh - 64px); /*64 is the height of the header*/
+  padding: 0 10px;
+  box-sizing: border-box;
+
+  text-align: center;
+  overflow-y: auto;
+}
+
+#feedback, #privacy, #answers, #help, #dashboard, #Detail {
   display: none;
+  /*width: 100vw; will get max screen*/
   width: 100%;
   height: calc(100vh - 64px - 25px - 86px);
   padding: 30px;
@@ -221,7 +253,12 @@ h5 {
   overflow-y: auto;
 }
 
-#feedback button, #privacy button, #answers button, #help button, #Detail button {
+#tutor {
+  margin-top: 45vh;
+  text-align: center;
+}
+
+#feedback button, #tutor button, #privacy button, #answers button, #help button, #Detail button {
   background-color: #ffffff;
   color: var(--main-color); /* #b51f1f;*/
   border: 1px solid var(--main-color); /*#b51f1f;*/
@@ -232,9 +269,16 @@ h5 {
   cursor: pointer;
 }
 
-#feedback button.button-primary, #privacy button.button-primary, #answers button.button-primary, #help button.button-primary, #backButton, #Detail button.button-primary {
+#feedback button.button-primary,  #tutor button.button-primary, #privacy button.button-primary, #answers button.button-primary, #help button.button-primary, #backButton, #Detail button.button-primary {
   background-color: var(--main-color); /* #b51f1f; */
   color: #ffffff;
+}
+
+#tutor button.button-sec {
+  border: 1px solid var(--gpt-color);
+  background-color: var(--gpt-color); /* #b51f1f; */
+  color: #ffffff;
+  margin-left: 30px;
 }
 
 #feedback-form {
@@ -309,10 +353,12 @@ fieldset.rating {
 /*anpassen der Chatbox*/
 
 #chatbox {
-  display: block;
+  display: flex;
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
   padding: 10px;
+  flex-direction: column;
 }
 
 /*Anpassen des Eingabefeldes*/
@@ -406,7 +452,7 @@ fieldset.rating {
   border: none;
   color: #FFFFFF;
   text-align: center;
-  font-size: 28px;
+  /*font-size: 28px;*/
   padding: 20px;
   transition: all 0.5s;
   cursor: pointer;
@@ -453,7 +499,7 @@ fieldset.rating {
   min-height: 84px;
   padding: 10px;
   box-sizing: border-box;
-  font-size: 16px;
+  /*font-size: 16px;*/
   line-height: 25px;
   background-color: rgba(217, 213, 213, 0.84);
   /* background-color: #f4f4f4;   rgba(244, 244, 244, 0.58); */
@@ -466,6 +512,7 @@ fieldset.rating {
   min-height: 60px;
   clear: both;
   overflow-wrap: anywhere;
+  font-size: 14px;
 }
 
 .message-botname {
@@ -617,7 +664,7 @@ fieldset.rating {
   background-color: burlywood;
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 1100px) {
   .chatbot {
     display: block;
     width: 100%;

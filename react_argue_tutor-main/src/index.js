@@ -6,6 +6,7 @@ import './static/stylesheet/epfl.css';
 
 import {MainFrame} from "./components/main_frame";
 import {MainFrameEn} from "./components/MainFrameEn";
+import {TestFrame} from "./components/TestFrame";
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
@@ -17,6 +18,7 @@ import {MainFrameEn} from "./components/MainFrameEn";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <MainFrameEn />
+    // <MainFrameEn />
+    <TestFrame/>
 );
 
