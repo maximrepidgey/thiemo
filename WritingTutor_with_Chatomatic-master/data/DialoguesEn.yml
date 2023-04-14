@@ -3,6 +3,15 @@ categories:
   - Conversations
 conversations:
   -
+    - hello
+    - "Hello, how can I help you?"
+  -
+    - good afternoon
+    - "Hello, how can I help you?"
+  -
+    - greetings
+    - "Hello, how can I help you?"
+  -
     - "What time is it?"
     - getTIME
   -
@@ -156,10 +165,7 @@ conversations:
 
      <h4> Some suggestions for theory </h4>
      <button class=\"chatSuggest\" onclick=\"chatSuggest('What is polarity and how can I improve it?');\">What is polarity and how can I improve it?</button>
-     <button class=\"chatSuggest\" onclick=\"chatSuggest('What is subjectivity/objectivity and how can I improve it?');\">What is subjectivity/objectivity and how can I improve it?</button>
-
-     <h4> Evaluation </h4>
-     <button class=\"chatSuggest\" onclick=\"displayELEA('5001/');return false;\">Open the textfield</button>"
+     <button class=\"chatSuggest\" onclick=\"chatSuggest('What is subjectivity/objectivity and how can I improve it?');\">What is subjectivity/objectivity and how can I improve it?</button>"
   -
     - What else can you do?
     - "<p>Of course, I am eager to help you improve your reasoning skills, but a little fun and a short break can't hurt.</p>
@@ -169,7 +175,7 @@ conversations:
   -
     - Joke!
     - "<p> Was sagt ein Krokodil, das einen Clown gefressen hat? 'Schmeckt komisch!' &#128584; &#128518;</p>
-    <button class=\"chatSuggest\" onclick=\"chatSuggest('Einführung');\">Back to the introduction</button>"
+    <button class=\"chatSuggest\" onclick=\"chatSuggest('Introduction');\">Back to the introduction</button>"
   -
     - I cannot do that.
     - "<p> I'm sorry, I can't do that. </p>

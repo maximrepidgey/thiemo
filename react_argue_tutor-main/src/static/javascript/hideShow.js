@@ -2,13 +2,9 @@
  * show privacy window
  */
 function showPrivacy() {
-    // document.querySelectorAll("#open-feedback-button, #open-help-button, #open-Detail-button").forEach(e => e.style.display = 'none');
-    // document.getElementById("feedback").style.display = 'none';
-    // document.getElementById("scrollbox").style.display = 'none';
-    // document.getElementById("userInput").style.display = 'none';
-    // document.getElementById("chatgpt").style.display = 'none'; activate maybe later
     document.getElementById("privacy").style.display = 'inline-block';
 }
+
 export {showPrivacy}
 
 

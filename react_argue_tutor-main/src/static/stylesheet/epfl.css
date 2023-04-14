@@ -241,8 +241,15 @@ h5 {
   overflow-y: auto;
 }
 
-#feedback, #privacy, #answers, #help, #dashboard, #Detail {
+#privacy {
+  display: inline-block;
+}
+
+#feedback, #answers, #help, #dashboard, #Detail {
   display: none;
+
+}
+#feedback, #privacy, #answers, #help, #dashboard, #Detail {
   /*width: 100vw; will get max screen*/
   width: 100%;
   height: calc(100vh - 64px - 25px - 86px);
@@ -252,6 +259,16 @@ h5 {
   text-align: center;
   overflow-y: auto;
 }
+
+#loadingEvaluationAnimation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+}
+
 
 #tutor {
   margin-top: 45vh;
@@ -386,11 +403,11 @@ fieldset.rating {
 /*Einstellen des "Message" Feldes*/
 
 #textInput {
-  width: calc(100% - 90px);
+  width: calc(100% - 50px);
   height: 40px;
   padding: 10px;
   box-sizing: border-box;
-  font-size: 16px;
+  font-size: 14px;
   background-color: #ffffff;
   border: none;
   border-radius: 25px;
@@ -419,10 +436,22 @@ fieldset.rating {
   border: none;
   border-radius: 100%;
   cursor: pointer;
+  float: right;
 }
 
 #buttonInput:hover {
   background-color: var(--light-color); /*#b51f1f;*/
+}
+
+#evalution_textarea {
+  resize: none;
+  border-radius: 10px;
+  box-shadow: none;
+  border-width: 0;
+  background-color: #f4f4f4;
+  height: 65vh;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
 }
 
 /* Einstellungen an den Chatbuttonvorschlägen, welche in der Datenbank festgelegt wurden*/
@@ -495,7 +524,8 @@ fieldset.rating {
 
 .botText {
   display: flex;
-  width: 85%;
+  /*width: 85%;*/
+  width: auto;
   min-height: 84px;
   padding: 10px;
   box-sizing: border-box;
@@ -545,7 +575,7 @@ fieldset.rating {
   display: block;
   width: calc(100% - 80px);
   float: right;
-  padding-left: 20px;
+  padding-left: 10px;
   box-sizing: border-box;
 }
 

@@ -1,8 +1,6 @@
 import Swal from "sweetalert";
 
 
-
-
 const CHATBOT_URL = "http://127.0.0.1:8006";
 export {CHATBOT_URL}
 
@@ -23,23 +21,6 @@ function ready(fn) {
 export {ready}
 
 /**
- * Initializes chatbot, gets first response, and loads intro message
- *
- * @param updateChatBoxContent
- *          function that updates the chat box with the argument passed to it
- */
-function initializeBot(gpt) {
-    if (gpt) {
-        // getResponse("StartGPT", gpt, updateChatBoxContentThis);
-        // getResponse("StartGPT", gpt);
-    } else {
-        // getResponse("Introduction", gpt, updateChatBoxContentThis);
-        // getResponse("Introduction", gpt);
-    }
-}
-export {initializeBot}
-
-/**
  * Get current time
  *
  * @returns {string} current time
@@ -52,8 +33,6 @@ function getTime() {
 }
 
 export {getTime}
-
-
 
 
 /**

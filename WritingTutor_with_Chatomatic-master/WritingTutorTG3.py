@@ -98,7 +98,7 @@ def get_bot_response():
         botReply = openai.ChatCompletion.create(
             model=MODEL,
             messages=[
-                {"role": "system", "content": "Act as writing tutor that helps students to write an argumentative essay. Highlight import terms with html bold tag"},
+                {"role": "system", "content": "Act as writing tutor that helps students to write an argumentative essay. Return HTML code highlighting important terms"},
                 {"role": "user", "content": "can you give me some suggestions about the theory of argumentative writing"},
                 {"role": "assistant", "content": "I can suggest learning these topics: structure of the argument, "
                                                  "strength of the opinion, objectivity of the essay, sentiment measure,"

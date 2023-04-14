@@ -1,11 +1,9 @@
 import React from "react";
 import Swal from 'sweetalert';
-import {ClapSpinner} from 'react-spinners-kit';
 
 import {
     CHATBOT_URL,
     getTime,
-    initializeBot,
 } from "../static/javascript/ArgueTutorEn";
 
 import {
@@ -24,6 +22,14 @@ class Chat extends React.Component {
     componentDidMount() {
         const that = this; // used to trick JS avoiding recursive call (inherited from past)
 
+        // Initializes chatbot, gets first response, and loads intro message
+        if (this.state.chatGPT) {
+            this.getResponse("StartGPT");
+        } else {
+            this.getResponse("Introduction");
+        }
+
+
         /**
          * Handles Chatbot button clicks
          *
@@ -32,8 +38,7 @@ class Chat extends React.Component {
          */
         window.chatSuggest = function (text) {
             that.setState({wasQuestion: true},
-
-                () => that.chatSuggestCall(that, that.state.chatGPTColor, text)
+                () => that.chatSuggestCall(text)
             );
         }
 
@@ -169,42 +174,20 @@ class Chat extends React.Component {
             });
     }
 
-    chatGPTChange = async () => {
-        // if active reset to predefined bot (red)
-        if (this.state.chatGPTColor) {
-            document.documentElement.style.setProperty("--main-color", "#b51f1f")
-            // show instructions about using normal bot
-        } else {
-            document.documentElement.style.setProperty("--main-color", "#35BC55")
-            // show instructions about using chatgpt bot
-        }
-        await this.setState({chatGPTColor: !this.state.chatGPTColor})
-        initializeBot(this.updateChatBoxContent, this.state.chatGPTColor)
-    }
 
     /**
      * get response from python chatterbot backend and update the chatbox with the received answer
      * @param text
      *          request of the user
-     * @param gpt
-     *          boolean if chatgpt option is activated
-     * @param updateChatBoxContent
-     *          function to update the chatbox (takes the html response as parameter)
-     * @returns {null}
      */
-    getResponse(text, gpt) {
-        console.log(text)
-        // solves the issue of using this function in the main frame
-        /*if (text === "StartGPT" || text === "Introduction") {
-            updateChatBoxContent = updateChatBoxContentThis
-        }*/
+    getResponse(text) {
         fetch(CHATBOT_URL + "/getResponse",
             {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({gpt: gpt, text: text})
+                body: JSON.stringify({gpt: this.state.chatGPT, text: text})
             })
             .then(response => {
                 return response.json()
@@ -215,36 +198,6 @@ class Chat extends React.Component {
             });
     }
 
-
-
-    getSmalltalkResponse(text, gpt, andThen) {
-        if (text.includes("joke") || text.includes("gag") || text.includes("wit") || text.includes("fun")) { // tell joke
-            text = "joke";
-        }
-
-        let response = this.getResponse(text, gpt, andThen);
-        // interrupt/smalltalk
-        if (this.state.evaluationRunning) {
-        }
-        return response;
-    }
-
-    /**
-     * Returns the IDK reply from the backend or writing an email if idk responses are more than 2.
-     **/
-    getIDKResponse(gpt) {
-        this.state.IDKcounter++; // count IDK
-        let botReply;
-        if (this.state.IDKcounter < 2) {
-            botReply = this.getResponse(this.IDK_REPLY, gpt);
-        } else { // reply with email suggestion after 2 attempts
-            botReply = this.getResponse(this.EMAIL_RESULT, gpt);
-        }
-        return botReply;
-    }
-
-    IDK_REPLY = "I did not understand";
-    EMAIL_RESULT = "open E-Mail";
 
     /**
      * Adds chatbot message to the chatbox.
@@ -273,31 +226,6 @@ class Chat extends React.Component {
         document.getElementById("textInput").focus();
     }
 
-    /**
-     * requests response from backend
-     *
-     * @param text
-     *          question
-     */
-    getBotResponse(text, gpt) {
-        text = text.toLowerCase(); // convert input text to lowercase
-
-        // restart evaluation
-        if (text.toLowerCase().includes("neustart")) {
-            this.getResponse("Introduction", gpt);
-            return;
-        }
-
-        this.getSmalltalkResponse(text, gpt, (response) => {
-
-            if (response.includes("IDKresponse")) {
-                this.updateChatBoxContent(this.getIDKResponse(gpt));
-            } else {
-                this.updateChatBoxContent(response);
-            }
-        });
-    }
-
 
     /**
      * Adds user message to the chatbox
@@ -322,42 +250,40 @@ class Chat extends React.Component {
     }
 
     /**
-     * submits message to the backend
+     * Submits message to the backend
      *
      * @param text
      *          message to submit
-     * @param updateChatBoxContent
-     *          method to update the chatbox content
      */
-    submitMessage(text, gpt, updateChatBoxContent) {
+    submitMessage(text) {
         if (text.trim() === "") {
             return;
         }
 
-        this.addUserMessage(text, updateChatBoxContent);
+        this.addUserMessage(text);
         document.getElementById("textInput").value = ""
         document.getElementById("buttonInput").disabled = true;
         document.getElementById("textInput").disabled = true;
 
-        this.getBotResponse(text, gpt, updateChatBoxContent);
+        text = text.toLowerCase(); // convert input text to lowercase
+        // get response from backend
+        this.getResponse(text)
     }
 
     /**
      * handles chat suggest calls from user
      *
-     * @param chatBot
-     *          current chatbot
      * @param text
      *          user message
      */
-    chatSuggestCall(chatBot, gpt, text) {
+    chatSuggestCall(text) {
         const elems = document.getElementsByClassName('chatSuggest');
         for (const elem of elems) {
             elem.disabled = true
         }
 
         document.getElementById("textInput").value = text;
-        this.submitMessage(text, gpt, chatBot.updateChatBoxContent);
+        this.submitMessage(text);
     }
 
 
@@ -384,7 +310,7 @@ class Chat extends React.Component {
             // added this, so that the scrollbox height is adjusted to the correct spot since the last one is still at the height of the
             // last question if we clicked on "textfeld öffnen"
             this.setState({wasQuestion: true},
-                () => this.submitMessage(text, this.state.chatGPTColor, this.updateChatBoxContent))
+                () => this.submitMessage(text))
         }
 
 
@@ -690,7 +616,6 @@ class Chat extends React.Component {
                             </p>
                         </div>
                     </div>
-
 
 
                     {/* Header Buttons END */}
