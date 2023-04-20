@@ -219,6 +219,11 @@ h5 {
   border-radius: 0.25em;
 }
 
+.rating {
+  border-radius: 10px;
+  text-align: center;
+}
+
 #scrollbox {
   display: block;
   position: relative;

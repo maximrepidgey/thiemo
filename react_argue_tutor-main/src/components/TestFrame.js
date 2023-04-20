@@ -11,7 +11,9 @@ class TestFrame extends React.Component {
         this.state = {
             chatGPT: false,
             showPrivacy: true,
-            showTutor: false
+            showTutor: false,
+            showEvaluationSelection: false,
+            evaluationDynamic: false
         };
 
         /**
@@ -77,14 +79,27 @@ class TestFrame extends React.Component {
             <div className={"chatbot"} id={"tutor"}>
                 <h3>Choose the chatbot modality</h3>
                 <button type={"button"} className={"button button-primary"}
-                        onClick={() => this.setState({showTutor: false, chatGPT: false})}>
+                        onClick={() => this.setState({showTutor: false, chatGPT: false, showEvaluationSelection: true})}>
                     Static
                 </button>
                 <button type={"button"} className={"button button-sec"}
-                        onClick={() => this.setState({showTutor: false, chatGPT: true})}>
+                        onClick={() => this.setState({showTutor: false, chatGPT: true, showEvaluationSelection: true})}>
                     Dynamic
                 </button>
 
+            </div>
+        )
+        else if (this.state.showEvaluationSelection) return (
+            <div className={"chatbot"} id={"tutor"}>
+                <h3>Choose the evaluation method</h3>
+                <button type={"button"} className={"button button-primary"}
+                        onClick={() => this.setState({showEvaluationSelection: false, evaluationDynamic: false})}>
+                    Static
+                </button>
+                <button type={"button"} className={"button button-sec"}
+                        onClick={() => this.setState({showEvaluationSelection: false, evaluationDynamic: true})}>
+                    Dynamic
+                </button>
             </div>
         )
         // render the main chatbot
@@ -92,7 +107,7 @@ class TestFrame extends React.Component {
             <div>
                 <div className={"columns"}>
                     <Chat chatGPT={this.state.chatGPT}/>
-                    <Evaluation chatGPT={this.state.chatGPT}/>
+                    <Evaluation dynamic={this.state.evaluationDynamic}/>
                 </div>
             </div>
         );

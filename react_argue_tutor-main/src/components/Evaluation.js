@@ -6,13 +6,13 @@ import Swal from "sweetalert";
 import {
     CHATBOT_URL,
     computeDashboard,
-    getTime, getTopSentences,
+    getTime,
     highlightKeyword,
-    highlightTopNPolaritySentences,
-    highlightTopNSubjectivitySentences,
 } from "../static/javascript/ArgueTutorEn";
 
 import {showChat, hideEssayField} from "../static/javascript/hideShow"
+import {DashboardDynamic} from "./DashboardDynamic";
+import {DashboardStatic} from "./DashboardStatic";
 
 
 class Evaluation extends React.Component {
@@ -48,12 +48,13 @@ class Evaluation extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            wasQuestion: false,
-            dashboardIsComputed: false,
             topKeywords: [],
             dashboardText: '',
             ascPolSentences: [[]],
             ascSubSentences: [[]],
+            dynamic: props.dynamic,
+            dashboardIsComputed: false,
+            showDashboard: false,
         };
     }
 
@@ -94,26 +95,6 @@ class Evaluation extends React.Component {
         document.getElementById("dashboard").scroll(options);
     }
 
-
-    /**
-     * recomputes the essay stats
-     */
-    updateEssayStats = () => {
-        let text = document.getElementById("evalution_textarea").value;
-        let characterCount = document.getElementById("characterCount");
-        let wordCount = document.getElementById("wordCount");
-        let sentenceCount = document.getElementById("sentenceCount");
-        let paragraphCount = document.getElementById("paragraphCount");
-        let readingTime = document.getElementById("readingTime");
-        let topKeywords = document.getElementById("topKeywords");
-
-        this.computeEssayStats(characterCount, text, wordCount, sentenceCount, paragraphCount, readingTime, topKeywords);
-
-        let keywords = document.getElementsByClassName("keywords")
-        for (let i = 0; i < keywords.length; i++) {
-            keywords[i].style.display = "block";
-        }
-    }
 
 
 
@@ -173,7 +154,6 @@ class Evaluation extends React.Component {
             } else {
                 showChat();
             }
-            this.setState({wasQuestion: false});
         }
 
 
@@ -203,8 +183,6 @@ class Evaluation extends React.Component {
                     return;
                 }
 
-
-                this.setState({wasQuestion: false});
 
                 document.getElementById("loadingEvaluationAnimation").style.display = "";
                 document.getElementById("close-essay-field-button").disabled = true;
@@ -274,113 +252,65 @@ class Evaluation extends React.Component {
                     document.getElementById("loadingEvaluationAnimation").style.display = "none";
                     closeEssayButtonClick();
                     closeDashboardButtonClick();
-                    let botHtml =
-                        `<div class="message">
-                        <div class="message-botname">WritingTutor</div>
-                        <div class="botText">
-                            <div class="avatar-wrapper">
-                                <img class="avatar" alt="avatar">
-                            </div>
-                            <div class="data-wrapper">There was a mistake when evaluating your essay, I apologise. Please try again by clicking on the "Open text box" button above.</div>
-                        </div>
-                        <div class="message-time">` + getTime() + `</div>
-                    </div>
-                    `;
-                    this.setState({wasQuestion: true}, () => this.updateChatBoxContent(botHtml));
+                    this.setState({dashboardIsComputed: false})
                 });
             }
 
+        // todo use state for showing buttons, and show the dashboard with the message that the evaluation is not done yet
+        // or simply
 
-
+        // todo check if rerendering the dashboard will save the info
+        // pass the info to the dashboard components as obj prop, compute everything here
         return (
             <div className={"column"}>
                 <div className="chatbot">
                     <div className="header">
                         <div className="header-button-bar">
-                            <button className="header-button" id="close-dashboard-button" style={{display: "none"}}
-                                onClick={closeDashboardButtonClick}>
-                                <i className="fa fa-times"/>
-                                <span>Dashboard</span>
-                            </button>
-                            <button className="header-button" id="show-dashboard-button" style={{display: "none"}}
-                                    onClick={showDashboardButtonClick}>
-                                <i className="fas fa-chart-pie"/>
-                                <span>Dashboard</span>
-                            </button>
-                            <button className="header-button" id="close-essay-field-button" style={{display: "none"}}
-                                onClick={closeEssayButtonClick}>
-                                <i className="fa fa-times"/>
-                                Text field
-                            </button>
-                            <button className="header-button" id="open-essay-page" style={{display: "none"}}
-                                onClick={() => this.showEssayField(this.state.dashboardIsComputed)}>
-                                <i className="far fa-file-alt"/>
-                                <span>Text field</span>
-                            </button>
+                        {this.state.dashboardIsComputed ? // checks if the evaluation was performed, if so show the dashboard
+                            this.state.showDashboard ? // used to show the close and open buttons for dashboard
+                                <button className="header-button" id="close-dashboard-button"
+                                    onClick={() => this.setState({showDashboard: false})}>
+                                    <i className="fa fa-times"/>
+                                    <span>Dashboard</span>
+                                </button>
+                                :
+                                <button className="header-button" id="show-dashboard-button"
+                                        onClick={() => this.setState({showDashboard: true})}>
+                                    <i className="fas fa-chart-pie"/>
+                                    <span>Dashboard</span>
+                                </button>
+                            : <React.Fragment/>
+                        }
                         </div>
                     </div>
 
-                    {/* DASHBOARD shows the final evaluation */}
-                    <div id="dashboard">
-                        <div className="col-md-12">
-                            <div className="rounded border">
-                                <div className="container-fluid text-center mt-3">
-                                    <h1 className="m-0" style={{borderBottomStyle: "solid", marginBottom: "15px!important"}}>
-                                        Dashboard
-                                    </h1>
-                                </div>
-                                <div className="row">
-                                    <div className="col-md-12">
-                                        <div className="p-2">
-                                            {/* STRUCTURE-GRAPH */}
-                                            <div className="container-fluid text-center" style={{fontSize: "1.5em", fontWeight: 600}}>
-                                                Here is you text
-                                            </div>
+                    {this.state.showDashboard ? // renders evaluation dashboard otherwise renders the text box
+                        this.state.dynamic ? <DashboardDynamic/> : <DashboardStatic/>
+                    :
+                        <div id="ELEAIframeTemplate">
+                            <form method="post">
+                                <label style={{display: "block", fontSize: "x-large", marginBottom: "0.5rem", marginTop: "0.5rem"}}>
+                                    Evaluation Text box
+                                </label>
+                                <div className="w3-display-left">
+                                    <div className="ehi-wordcount-container">
+                                        <label htmlFor="evalution_textarea"/>
+
+                                        <div id={"loadingEvaluationAnimation"} style={{display: "none"}}>
+                                            <ClapSpinner size={40} color="#686769" loading={true}/>
                                         </div>
-                                    </div>
-                                    {/* Implementation of the text in the dashboard, including the wordcount table*/}
-                                    <div className="col-md-12 card"
-                                        style={{
-                                            maxWidth: "80%",
-                                            marginLeft: "auto",
-                                            marginRight: "auto",
-                                        }}>
-                                        <div className="p-2 border p-4" id="userDashboardText"
-                                            style={{
-                                                marginTop: 10,
-                                                marginBottom: 20,
-                                                backgroundColor: "azure",
-                                            }}/>
+                                        <textarea spellCheck={true} className="text" rows={25} cols={25} name="evaluationText"
+                                                  id="evalution_textarea" placeholder="Enter your text here..." defaultValue={""}/>
                                     </div>
                                 </div>
-                                {/* Second section  */}
-                            </div>
+                            </form>
+                            <button className="buttonEval" id="button-eval" onClick={evaluationChatSuggest}>
+                                Evaluate the text
+                            </button>
                         </div>
-                    </div>
-                    {/* DASHBOARD END */}
+                    }
 
-                    {/*Essay Writing Part*/}
-                    <div id="ELEAIframeTemplate">
-                        <form method="post">
-                            <label style={{display: "block", fontSize: "x-large", marginBottom: "0.5rem", marginTop: "0.5rem"}}>
-                                Evaluation Text box
-                            </label>
-                            <div className="w3-display-left">
-                                <div className="ehi-wordcount-container">
-                                    <label htmlFor="evalution_textarea"/>
 
-                                    <div id={"loadingEvaluationAnimation"} style={{display: "none"}}>
-                                        <ClapSpinner size={40} color="#686769" loading={true}/>
-                                    </div>
-                                    <textarea spellCheck={true} className="text" rows={25} cols={25} name="evaluationText"
-                                        id="evalution_textarea" placeholder="Enter your text here..." defaultValue={""}/>
-                                </div>
-                            </div>
-                        </form>
-                        <button className="buttonEval" id="button-eval" onClick={evaluationChatSuggest}>
-                            Evaluate the text
-                        </button>
-                    </div>
                 </div>
             </div>
         )
