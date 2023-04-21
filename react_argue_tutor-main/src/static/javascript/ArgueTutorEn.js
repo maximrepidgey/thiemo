@@ -247,10 +247,8 @@ function computeDashboard(subjectivity, polarity, userText, sentences, addOnClic
 
     clearDashboardBoxes();
 
-    document.getElementById("dashboard").style.display = 'inline-block';
-    addOnClickToReloadPage()
+    // addOnClickToReloadPage()
 
-    document.getElementById("userInput").style.display = 'none';
 
     document.getElementById('userDashboardText').innerHTML = addHighlighFunctionalityToTopKeywords(userText, state);
 
@@ -270,15 +268,6 @@ function computeDashboard(subjectivity, polarity, userText, sentences, addOnClic
     document.getElementById(box2).style.backgroundColor = "rgba(0,255, 0, 0.75)";
     writtenPolarity(polarity);
     writtenSubjectivity(subjectivity);
-
-    document.getElementById("open-feedback-button").style.display = 'none';
-    document.getElementById("open-Detail-button").style.display = 'none';
-    document.getElementById("open-help-button").style.display = 'none';
-    document.getElementById("close-help-button").style.display = 'none';
-    document.getElementById("scrollbox").style.display = 'none';
-    document.getElementById("userInput").style.display = 'none';
-
-    document.getElementById("close-dashboard-button").style.display = '';
 
     Swal({
         title: 'Your Dashboard is ready!',

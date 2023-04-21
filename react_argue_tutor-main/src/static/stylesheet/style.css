@@ -257,7 +257,7 @@ body {
 
 .output.row div {
   display: inline-block;
-  width: 42%;
+  /*width: 42%;*/
   padding: 10px 15px;
   margin: 2px;
 }

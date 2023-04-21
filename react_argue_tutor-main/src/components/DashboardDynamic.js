@@ -6,7 +6,7 @@ class DashboardDynamic extends React.Component {
     render() {
 
         return (
-            <div id="dashboard">
+            <div id="dashboard-dynamic">
                 <div className="col-md-12">
                     <div className="rounded border">
                         <div className="container-fluid text-center mt-3">
