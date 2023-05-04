@@ -1,6 +1,6 @@
 import Swal from "sweetalert";
 
-
+import stopWords from "../stop_words_english.json"
 const CHATBOT_URL = "http://127.0.0.1:8006";
 export {CHATBOT_URL}
 
@@ -33,6 +33,85 @@ function getTime() {
 }
 
 export {getTime}
+
+
+/**
+ * Computes the essay stats based on the given input
+ *
+ */
+const computeEssayStats = (text) => {
+    let characterCount = document.getElementById("characterCountDB");
+    let wordCount = document.getElementById("wordCountDashboard");
+    let sentenceCount = document.getElementById("sentenceCountDB");
+    let paragraphCount = document.getElementById("paragraphCountDB");
+    let readingTime = document.getElementById("readingTimeDB");
+    let topKeywords = document.getElementById("topKeywordsDB");
+
+    characterCount.innerHTML = text.length;
+
+    let words = text.match(/[-?(\w+)äöüÄÖÜß]+/gi);
+
+    if (words === null) {
+        wordCount.innerHTML = 0;
+        sentenceCount.innerHTML = 0;
+        paragraphCount.innerHTML = 0;
+        readingTime.innerHTML = "0s";
+        topKeywords.style.display = "none";
+
+        return;
+    }
+
+    wordCount.innerHTML = words.length;
+    sentenceCount.innerHTML = text.split(/[.!?]+/g).length - 1;
+    paragraphCount.innerHTML = text.replace(/\n$/gm, '').split(/\n/).length;
+
+    const seconds = Math.ceil(words.length * 60 / 275);
+    if (seconds > 59) {
+        let minutes = Math.floor(seconds / 60);
+        const actualSeconds = seconds - minutes * 60;
+        readingTime.innerHTML = minutes + "m " + actualSeconds + "s";
+    } else {
+        readingTime.innerHTML = seconds + "s";
+    }
+
+    let nonStopWords = [];
+    for (let i = 0; i < words.length; i++) {
+        if (stopWords.indexOf(words[i].toLowerCase()) === -1 && isNaN(words[i])) {
+            nonStopWords.push(words[i].toLowerCase());
+        }
+    }
+    let keywords = {};
+    for (let i = 0; i < nonStopWords.length; i++) {
+        if (nonStopWords[i] in keywords) {
+            keywords[nonStopWords[i]] += 1;
+        } else {
+            keywords[nonStopWords[i]] = 1;
+        }
+    }
+    let sortedKeywords = [];
+    for (let keyword in keywords) {
+        sortedKeywords.push([keyword, keywords[keyword]])
+    }
+    sortedKeywords.sort(function (a, b) {
+        return b[1] - a[1]
+    });
+
+    // this.setState({topKeywords: sortedKeywords.slice(0, 4)});
+    topKeywords.innerHTML = "";
+    for (let i = 0; i < sortedKeywords.length && i < 4; i++) {
+        let li = document.createElement('li');
+        li.innerHTML = "<b>" + sortedKeywords[i][0] + "</b>: " + sortedKeywords[i][1];
+
+        topKeywords.appendChild(li);
+    }
+
+    topKeywords.style.display = "block";
+
+    return sortedKeywords.slice(0, 4)
+}
+
+export {computeEssayStats}
+
 
 
 /**
@@ -107,7 +186,7 @@ function highlightTopNSentences(text, sentsToHighlight, n, title) {
  * @returns {string} html string containing the highlighted sentences
  */
 function highlightTopNPolaritySentences(text, sentsToHighlight, n) {
-    let title = 'Auf&nbsp;einer&nbsp;Skala&nbsp;von&nbsp;sehr&nbsp;negativ&nbsp;(-1)&nbsp;bis&nbsp;sehr&nbsp;positiv&nbsp;(1)&nbsp;ist&nbsp;dieser&nbsp;Satz:&nbsp;';
+    let title = 'On&nbsp;a&nbsp;scale&nbsp;from&nbsp;very&nbsp;negative&nbsp;(-1)&nbsp;to&nbsp;very&nbsp;positive&nbsp;(1)&nbsp;this&nbsp;sentence&nbsp;is:&nbsp;';
 
     return highlightTopNSentences(text, sentsToHighlight, n, title);
 }
@@ -128,7 +207,7 @@ export {highlightTopNPolaritySentences}
 function highlightTopNSubjectivitySentences(text, sentsToHighlight, n) {
     // to also display a value between -1 and 1
     let subjAdapted = sentsToHighlight.map(x => [x[0], 2*x[1] - 1]);
-    let title = 'Auf&nbsp;einer&nbsp;Skala&nbsp;von&nbsp;sehr&nbsp;objektiv&nbsp;(-1)&nbsp;bis&nbsp;sehr&nbsp;subjektiv&nbsp;(1)&nbsp;ist&nbsp;dieser&nbsp;Satz:&nbsp;';
+    let title = 'On&nbsp;a&nbsp;scale&nbsp;from&nbsp;very&nbsp;objective&nbsp;(-1)&nbsp;to&nbsp;very&nbsp;subjective&nbsp;(1)&nbsp;this&nbsp;sentence&nbsp;is:&nbsp;';
 
     return highlightTopNSentences(text, subjAdapted, n, title);
 }
@@ -209,8 +288,8 @@ export {highlightKeyword}
  *          current react state
  * @returns {string} adapted html string
  */
-function addHighlighFunctionalityToTopKeywords(text, state) {
-    let topKeywords = state.topKeywords.map(arr => arr[0]);
+function addHighlighFunctionalityToTopKeywords(text, topKeywords) {
+    topKeywords = topKeywords.map(arr => arr[0]);
 
     for (let i = 0; i < topKeywords.length; i++) {
         let html = document.getElementById("topKeywordsDB").innerHTML;
@@ -239,9 +318,9 @@ function addHighlighFunctionalityToTopKeywords(text, state) {
  * @param userText
  * @param sentences
  * @param addOnClickToReloadPage
- * @param state
+ * @param topKeywords
  */
-function computeDashboard(subjectivity, polarity, userText, sentences, addOnClickToReloadPage, state) {
+function computeDashboard(subjectivity, polarity, userText, sentences, addOnClickToReloadPage, topKeywords) {
     let box = "s";
     let box2 = "p";
 
@@ -250,7 +329,7 @@ function computeDashboard(subjectivity, polarity, userText, sentences, addOnClic
     // addOnClickToReloadPage()
 
 
-    document.getElementById('userDashboardText').innerHTML = addHighlighFunctionalityToTopKeywords(userText, state);
+    document.getElementById('userDashboardText').innerHTML = addHighlighFunctionalityToTopKeywords(userText, topKeywords);
 
     if (0.0 <= subjectivity && subjectivity <= 0.2) box += "1";
     if (0.2 < subjectivity && subjectivity <= 0.4) box += "2";

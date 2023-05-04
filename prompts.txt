@@ -2,3 +2,20 @@ evaluation:
 rate this essay from argumentative point of view: "<essay>"; very instable, generates opposite answers
 evaluate this essay, state if it has a good argumentative structure and the strength of the arguments: "<essay>"; good results, general feedback + argumentative
 Provide a feedback of this essay: "<essay>". Moreover, state if it has a good argumentative structure and what can be improved 
+
+
+temperature, frequency, presence - the numbers behind
+
+General feedback:
+Provide a feedback for the text. write only one paragraph 0.8, 0.3, 0.4
+
+Scores:
+evaluate the argumentative structure of the text from 1 to 5, where 1 is the worst and 5 is the best. Return only the number, no text. You can use also fractions and entire numbers
+evaluate the readability of the text from 1 to 5, where 1 is the worst and 5 is the best. Return only the number, no text. You can use also fractions and entire numbers
+evaluate the objectivity of the text from 1 to 5, where 1 is the worst and 5 is the best. Return only the number, no text. You can use also fractions and entire numbers 0.6, 0, 0
+
+Motivation behind the score:
+you rated this text with 1 out of 5 for objectivity, explain why. Also provide concrete examples from the text. Write not more than a paragraph 1.1, 0.2, 0.6
+
+Improvements:
+how can you improve this text in terms of objectivity. Provide three concrete examples. 0.8, 0.4, 0.6

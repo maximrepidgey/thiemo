@@ -8,7 +8,7 @@ from textblob import TextBlob
 from googletrans import Translator
 
 from transformers import pipeline
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import T5Tokenizer, T5ForConditionalGeneration, T5Config
 
 
 # @spacy.registry.misc("spacytextblob.de_blob")
@@ -41,17 +41,31 @@ def __sentences(text):
 
 
 def __get_summary(text):
-    # todo switch between languages, create default one in english
-    tokenizer = AutoTokenizer.from_pretrained("Einmalumdiewelt/T5-Base_GNAD")
-    model = AutoModelForSeq2SeqLM.from_pretrained("Einmalumdiewelt/T5-Base_GNAD")
+    print(text)
+    # tokenizer = AutoTokenizer.from_pretrained("Einmalumdiewelt/T5-Base_GNAD")
+    # model = AutoModelForSeq2SeqLM.from_pretrained("Einmalumdiewelt/T5-Base_GNAD")
+    model = T5ForConditionalGeneration.from_pretrained('t5-small')
+    tokenizer = T5Tokenizer.from_pretrained('t5-small')
 
-    input_ids = torch.tensor(tokenizer.encode(text)).unsqueeze(0)  # Batch size 1
+    preprocess_text = text.strip().replace("\n", "")
+    t5_prepared_Text = "summarize: " + preprocess_text
+    print("original text preprocessed: \n", preprocess_text)
 
-    # Run the text through the model to get the summary
-    output = model.generate(input_ids, max_length=512)
-    summary = tokenizer.decode(output[0], skip_special_tokens=True)
+    tokenized_text = tokenizer.encode(t5_prepared_Text, return_tensors="pt")
 
-    return summary
+    # summmarize
+    summary_ids = model.generate(tokenized_text,
+                                 num_beams=4,
+                                 no_repeat_ngram_size=2,
+                                 min_length=30,
+                                 max_length=200,
+                                 early_stopping=True)
+
+    output = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+
+    print("\n\nSummarized text: \n", output)
+
+    return output
 
 
 def __translate_to_english(text):

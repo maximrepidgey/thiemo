@@ -4,8 +4,6 @@ import './static/stylesheet/style.css';
 import './static/stylesheet/normalize.css';
 import './static/stylesheet/epfl.css';
 
-import {MainFrame} from "./components/main_frame";
-import {MainFrameEn} from "./components/MainFrameEn";
 import {TestFrame} from "./components/TestFrame";
 
 // If you want to start measuring performance in your app, pass a function
@@ -13,12 +11,10 @@ import {TestFrame} from "./components/TestFrame";
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 // reportWebVitals();
 
-
 // ========================================================
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    // <MainFrameEn />
     <TestFrame/>
 );
 

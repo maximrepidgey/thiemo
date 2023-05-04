@@ -8,7 +8,6 @@ function showPrivacy() {
 export {showPrivacy}
 
 
-
 /**
  * displays open feedback button
  */

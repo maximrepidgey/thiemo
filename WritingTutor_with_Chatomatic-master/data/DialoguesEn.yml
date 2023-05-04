@@ -218,7 +218,7 @@ conversations:
     - "<p>The argumentation consists of a sequence of statements in which you support your thesis (assertion) with arguments (reasons) and evidence (e.g. provable facts).  &#128107;</p>
            <p>There are really great videos to learn a lot from. Here is one of my favourites so far:</p>
            <h4>Learning material</h4>
-    <button class=\"chatSuggest\" onclick=\"playVideo('FBsNc_Cga9s');return false;\">Video: Types of arguments </button>
+    <button class=\"chatSuggest\" onclick=\"playVideo('3gdMJ19QqRc');return false;\">Video: Types of arguments </button>
     <h4>More Details</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Could you be more specific about the structure of arguments??');\">Structure of the arguments</button>
     <h4>Theoretical overview</h4>
@@ -234,7 +234,7 @@ conversations:
            <p>There are several ways to structure an argument. The basic argument is the simplest structure to create a complete argument. </p>
            <h4>Learning material</h4>
            <p>Here is a great video that goes into more detail. </p>
-    <button class=\"chatSuggest\" onclick=\"playVideo('_bO68Yhl9is');return false;\">Video: different types of arguments</button>
+    <button class=\"chatSuggest\" onclick=\"playVideo('YTU7D5R5fUo');return false;\">Video: different types of arguments</button>
     <h4>Theoretical overview</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Could you tell me about the different parts of argumentative essay?');\">Could you tell me about the different parts of argumentative essay?</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('I want to learn more about the basics of argumentation');\">Back</button>
@@ -252,9 +252,6 @@ conversations:
            <p>You should pay special attention to your emotional attitude when writing argumentation. In principle, it can be said that arguments should be kept neutral. However, this also depends on the context and the target group.
            With my help, you can always keep an eye on your emotional attitude!
     <button class=\"chatSuggest\" onclick=\"displayWebsite('www.smekenseducation.com/wp-content/uploads/bsk-pdf-manager/2020/06/Op_v_Pers_v_Arg.pdf');return false;\">Different writing styles for your essay</button>
-    <p>There are really great videos that you can learn a lot from. Here is a good video:</p>
-        <h4>Learning material</h4>
-    <button class=\"chatSuggest\" onclick=\"playVideo('SKlhoKT8ApM');return false;\">Video: Structure of an argument</button>
     <h4>Theoretical overview</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Could you explain more about the structure of arguments?');\">Structure of the argument</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('I want to learn more about the basics of argumentation');\">Back</button>

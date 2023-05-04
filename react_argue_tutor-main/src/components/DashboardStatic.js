@@ -21,10 +21,6 @@ class DashboardStatic extends React.Component{
         }
     }
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-    }
-
-
     componentWillUnmount() {
         window.displayELEA = undefined;
         window.highlightTopKeywordsWindow = undefined;
@@ -33,7 +29,6 @@ class DashboardStatic extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            topKeywords: [],
             dashboardText: '',
             text: props.text,
         };
@@ -54,7 +49,6 @@ class DashboardStatic extends React.Component{
 
 
     render() {
-
 
         const ratingsObjectivity = [
             {id: "s1", text: "Very objective"},
@@ -118,7 +112,7 @@ class DashboardStatic extends React.Component{
                                         </div>
                                         <div className="output row" style={{marginLeft: "-1rem"}}>
                                             <div>
-                                                Lesezeit: <span id="readingTimeDB">0</span>
+                                                Reading time: <span id="readingTimeDB">0</span>
                                             </div>
                                         </div>
                                     </div>
@@ -158,13 +152,11 @@ class DashboardStatic extends React.Component{
                                                 </progress>
                                                 <div className="row w-100 text-center mx-auto mt-2" style={{marginBottom: 15}}>
                                                     {ratingsObjectivity.map(({id, text})=> (
-                                                        <div id={id} className="col-md-2 border mx-auto rating">{text}</div>
+                                                        <div key={id} id={id} className="col-md-2 border mx-auto rating">{text}</div>
                                                     ))}
                                                 </div>
-                                                <a href={"javascript:void(0)"}
-                                                   onClick={this.props.showSubjectivitySources}> Most influential sentences for the
-                                                   {/*> Most influential sentences for the*/}
-                                                    Subjectivity decision?
+                                                <a onClick={this.props.showSubjectivitySources} className={"sentences"}>
+                                                    Most influential sentences for the subjectivity decision?
                                                 </a>
 
                                                 <h4 className="my-2"> Polarity </h4>
@@ -173,15 +165,16 @@ class DashboardStatic extends React.Component{
                                                 </progress>
                                                 <div className="row w-100 text-center mx-auto mt-2" style={{marginBottom: 20}}>
                                                     {ratingsEmotions.map(({id, text})=> (
-                                                        <div id={id} className="col-md-2 border mx-auto rating">{text}</div>
+                                                        <div id={id} key={id} className="col-md-2 border mx-auto rating">{text}</div>
                                                     ))}
                                                 </div>
-                                                {/*<a href={"javascript:void(0)"}> Most influential sentences for the polarity decision? </a>*/}
-                                                <a href={"javascript:void(0)"} onClick={this.props.showPolaritySources}> Most influential sentences for the polarity decision? </a>
+                                                <a onClick={this.props.showPolaritySources} className={"sentences"}>
+                                                    Most influential sentences for the polarity decision?
+                                                </a>
 
                                                 <h4>Emotions</h4>
                                                 {["Neutral", "Disgust", "Sadness", "Fear", "Anger", "Surprise", "Joy"].map((text) => (
-                                                    <React.Fragment>
+                                                    <React.Fragment key={text}>
                                                         <progress className={"progress"} id={text.toLowerCase()} max="100" value="90"
                                                                   title={"On a scale from not applicable at all (0%) to very applicable (100%), this text is:"}
                                                                   style={{content:"hello"}}>
@@ -195,12 +188,12 @@ class DashboardStatic extends React.Component{
                                                 <div id="dashboard-h2 my-2" style={{fontSize: "x-large"}}>
                                                     Subjectivity/Objectivity{" "}
                                                 </div>
-                                                <div className="text-black-50" style={{fontSize: "large"}} id="writtenSubjectivity"/>
+                                                <div id="writtenSubjectivity" className="text-black-50" style={{fontSize: "16px"}} />
                                                 <div id="dashboard-h2 my-2" style={{fontSize: "x-large"}}>
                                                     {" "}
                                                     Polarity{" "}
                                                 </div>
-                                                <div id="writtenPolarity" className="text-black-50" style={{fontSize: "large", marginBottom: 30}}/>
+                                                <div id="writtenPolarity" className="text-black-50" style={{fontSize: "16px", marginBottom: 30}}/>
                                             </div>
                                             {/* Reload page function - getting back to the introduction.  */}
                                             <div className="container-fluid text-center">

@@ -290,18 +290,6 @@ class Chat extends React.Component {
     render() {
 
         /**
-         * When the user hits enter (13), the typed question is sent to the backend
-         *
-         * @param event
-         *          keyboard event
-         */
-        const keyUpTextInput = (event) => {
-            if (event.which === 13) {
-                sendText();
-            }
-        }
-
-        /**
          * Sends the question from the textInput to the backend
          */
         const sendText = () => {
@@ -311,6 +299,18 @@ class Chat extends React.Component {
             // last question if we clicked on "textfeld öffnen"
             this.setState({wasQuestion: true},
                 () => this.submitMessage(text))
+        }
+
+        /**
+         * When the user hits enter (13), the typed question is sent to the backend
+         *
+         * @param event
+         *          keyboard event
+         */
+        const keyUpTextInput = (event) => {
+            if (event.which === 13) {
+                sendText();
+            }
         }
 
 
