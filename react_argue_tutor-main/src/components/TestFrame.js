@@ -74,25 +74,9 @@ class TestFrame extends React.Component {
         ).then(data => {
             console.log(data)
         })
-
-        /*fetch(CHATBOT_URL + "/test", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify({text: text})
-        }).then(response => response.json()
-        ).then(data => {
-            console.log(data.botReply)
-            document.getElementById("res").innerText = data.botReply
-        })*/
     }
 
     render() {
-        // document.getElementById("show-text-btn").addEventListener("click", function() {
-        //     document.getElementById("hidden-text").classList.add("show");
-        // });
-
         const showText1 = () => {
             this.setState({test1: !this.state.test1} , () => {
                 console.log(this.state.test)
@@ -158,6 +142,7 @@ class TestFrame extends React.Component {
         else if (this.state.showTutor) return (
             <div className={"chatbot"} id={"tutor"}>
                 <h3>Choose the chatbot modality</h3>
+                <p>Choose the chatbot modality that you have been assigned</p>
                 <button type={"button"} className={"button button-primary"}
                         onClick={() => this.setState({showTutor: false, chatGPT: false, showEvaluationSelection: true})}>
                     Static
@@ -172,6 +157,8 @@ class TestFrame extends React.Component {
         else if (this.state.showEvaluationSelection) return (
             <div className={"chatbot"} id={"tutor"}>
                 <h3>Choose the evaluation method</h3>
+                Choose the evaluation that you have been assigned <br/>
+                If you have made a mistake, just reload the page <br/>
                 <button type={"button"} className={"button button-primary"}
                         onClick={() => this.setState({showEvaluationSelection: false, evaluationDynamic: false})}>
                     Static

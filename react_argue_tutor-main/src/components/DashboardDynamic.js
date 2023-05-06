@@ -4,6 +4,39 @@ class DashboardDynamic extends React.Component {
 
     constructor(props) {
         super(props);
+
+        const ratingsObjectivity = [
+            {low: -1, high: 20, text: "Very subjective"},
+            {low: 20, high: 40, text: "subjective"},
+            {low: 40, high: 60, text: "Neutral"},
+            {low: 60, high: 80, text: "Objective"},
+            {low: 80, high: 110, text: "Very objective"},
+        ]
+
+        const ratingsReadability = [
+            {low: -1, high: 20, text: "Very unreadable"},
+            {low: 20, high: 40, text: "Unreadable"},
+            {low: 40, high: 60, text: "Neutral"},
+            {low: 60, high: 80, text: "Readable"},
+            {low: 80, high: 110, text: "Very readable"},
+        ]
+
+        const ratingsStructure = [
+            {low: -1, high: 20, text: "Very unstructured"},
+            {low: 20, high: 40, text: "unstructured"},
+            {low: 40, high: 60, text: "Neutral"},
+            {low: 60, high: 80, text: "well structured"},
+            {low: 80, high: 110, text: "Very well structured"},
+        ]
+
+        const ratingsConciseness = [
+            {low: -1, high: 20, text: "Not concise at all"},
+            {low: 20, high: 40, text: "Not concise"},
+            {low: 40, high: 60, text: "Neutral"},
+            {low: 60, high: 80, text: "concise"},
+            {low: 80, high: 110, text: "Very concise"},
+        ]
+
         this.state = {
             text: props.text,
             general: props.general,
@@ -12,25 +45,13 @@ class DashboardDynamic extends React.Component {
             objectivity: props.objectivity,
             conciseness: props.conciseness,
             infoShow: {
-                readability: {reason: false, improvement: false},
-                structure: {reason: false, improvement: false},
-                objectivity: {reason: false, improvement: false},
-                conciseness: {reason: false, improvement: false},
+                readability: {reason: false, improvement: false, ratings: ratingsReadability},
+                structure: {reason: false, improvement: false, ratings: ratingsStructure},
+                objectivity: {reason: false, improvement: false, ratings: ratingsObjectivity},
+                conciseness: {reason: false, improvement: false, ratings: ratingsConciseness},
             }
         };
     }
-
-    /*handleReason = (el) => {
-        // if close the reason, close also improvement
-        if (document.getElementById("text-reason-"+el).className === "show") {
-            document.getElementById("text-reason-"+el).className = "hide"
-            document.getElementById("button-improvement-"+el).className = "hide"
-            document.getElementById("text-improvement-"+el).className = "hide"
-        } else {
-            document.getElementById("text-reason-"+el).className = "show"
-            document.getElementById("button-improvement-"+el).className = "show"
-        }
-    }*/
 
     handleReason = (el) => {
         // if close the reason, close also improvement
@@ -54,20 +75,18 @@ class DashboardDynamic extends React.Component {
         }))
     }
 
-    // handle the improvement section
-    /*handleImprovement = (el) => {
-        if (document.getElementById("text-improvement-"+el).className === "show") {
-            document.getElementById("text-improvement-"+el).className = "hide"
-        } else {
-            document.getElementById("text-improvement-"+el).className = "show"
-        }
-    }*/
-
+    computeScore = (scoreAssigned, scoreLow, scoreHigh) => {
+        let score = parseInt(scoreAssigned)
+        score = score*2*10 // make it like percentage
+        return scoreLow <= score && score < scoreHigh;
+    }
 
 
     render() {
 
         const evaluations = [this.state.readability, this.state.structure, this.state.objectivity, this.state.conciseness]
+
+        // const ratingsObjectivity = ["Very subjective", "Subjective", "Neutral", "Objective", "Very objective",]
 
         return (
             <div id="dashboard-dynamic">
@@ -114,22 +133,29 @@ class DashboardDynamic extends React.Component {
 
                                                 {evaluations.map(el => (
                                                     <React.Fragment key={el.info}>
-                                                        <h6 className="my-2"> {el.info} </h6>
+                                                        <h6 className="my-2"> {el.info.charAt(0).toUpperCase() + el.info.slice(1)} </h6>
                                                         <progress className={"progress"} id={el.info.toLowerCase()} max="100" value={el.score*2*10}
                                                         title={"On a scale from 1 (bad) to 5 (good), the " +el.info + " is:"}
                                                         style={{content:"hello"}}>
                                                         </progress>
                                                         <div className="progressbarText">{el.score}</div>
+                                                        <div className="row w-100 text-center mx-auto mt-2" style={{marginBottom: 15}}>
+                                                            {this.state.infoShow[el.info].ratings.map(({low, high, text}) => (
+                                                                <div key={text} className="col-md-2 border mx-auto rating" style={{backgroundColor: this.computeScore(el.score, low, high) ? "rgba(0,255, 0, 0.75)" : "rgba(255, 255, 255, 0.75)"}}>
+                                                                    {text}
+                                                                </div>
+                                                            ))}
+                                                        </div>
                                                             {/*create a link that open explanation*/}
                                                         <a id={"button-reason-" + el.info} onClick={() => this.handleReason(el.info)} className={"show-text-btn"}>
-                                                            click to see the reason behind the score
+                                                            {this.state.infoShow[el.info].reason ? "close": "click for explanations"}
                                                         </a>
                                                         <div id={"text-reason-"+el.info} className={this.state.infoShow[el.info].reason ? "hidden-text show": "hidden-text hide" }>
                                                             <p>{el.reason}</p>
                                                         </div>
 
                                                         <a id={"button-improvement-" + el.info} onClick={() => this.handleImprovement(el.info)} className={this.state.infoShow[el.info].reason ? "show-text-btn": "show-text-btn hide" }>
-                                                            click to see the improvements that you can make
+                                                            {this.state.infoShow[el.info].improvement ? "close": "click to see the improvements that you can make"}
                                                         </a>
                                                         <div id={"text-improvement-"+el.info} className={this.state.infoShow[el.info].improvement &&  this.state.infoShow[el.info].reason? "hidden-text show": "hidden-text hide" }>
                                                             <p>{el.improvement}</p>

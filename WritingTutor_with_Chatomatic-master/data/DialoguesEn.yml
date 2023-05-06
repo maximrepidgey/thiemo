@@ -78,9 +78,9 @@ conversations:
           <p> Often students simply forget to consciously use positive/negative or subjective elements in their essays. Your essay can become too one-sided by being too positive or negative, or it can become too subjective or objective.
                             I help you to keep track of both areas and thus build a good and balanced argument structure so that you can achieve your desired goal! &#128521; </p>
           <button class=\"chatSuggest\" onclick=\"chatSuggest('What else can you do?');\">What else can you do?</button>
-          <h4> Theory </h4>
+          <h4 class=\"subtitles\"> Theory </h4>
           <button class=\"chatSuggest\" onclick=\"chatSuggest('Could we look at the theory?');\">Could we look at the theory?</button>
-          <h4> Evaluation </h4>
+          <h4 class=\"subtitles\"> Evaluation </h4>
           <button class=\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Are you ready? Start evaluation</button>"
   -
     - How is the weather?
@@ -95,40 +95,46 @@ conversations:
               I will explain what I mean by this. Finally, you will apply what you have learned so that I can give you feedback on your argumentation. I will analyse your text in terms of strength of opinion and objectivity.
               The results of my analysis and my theoretical inputs will hopefully help you to write even more convincing arguments! </p>
     <p>I am still in training, but I will do my best to help you! Try using the buttons to navigate through the learning environment. &#128515; </p>
-    <h4> Learning </h4>
+    <h4 class=\"subtitles\"> Learning </h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('I would like to learn more about the importance of the argumentation');\">I would like to learn more about the importance of the argumentation</button>
-    <h4> More information </h4>
-    <button class=\"chatSuggest\" onclick=\"chatSuggest('How can you help me, Writing Tutor?');\">How can you help me, Writing Tutor?</button>
-    <h4> Evaluation </h4>
-    <button class=\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Are you ready? Start evaluation</button>"
+    <h4 class=\"subtitles\"> More information </h4>
+    <button class=\"chatSuggest\" onclick=\"chatSuggest('How can you help me, Writing Tutor?');\">How can you help me, Writing Tutor?</button>"
   -
     - StartGPT
     - "<p>Hello, I am WritingTutor. I will help you to make your argumentative texts even more convincing.</p>
       <p>For this purpose, we will look at some theoretical basics together. At the same time, I want to raise your awareness of the power of opinion and objectivity in your texts.
        I will explain what I mean by this. Finally, you will apply what you have learned so that I can give you feedback on your argumentation. I will analyse your text in terms of strength of opinion and objectivity.
        The results of my analysis and my theoretical inputs will hopefully help you to write even more convincing arguments! </p>
-      <p>Currently, you are using embedded chatGPT dialogue. It is experimental option. This option works as pure conversation model... just ask questions like with human
-      Feel free to switch between chatbots. &#128515; </p>"
+       <p>I am still in training, but I will do my best to help you! Try using the buttons to navigate through the learning environment. &#128515; </p>
+      <p>I am build using chatGPT, in order to interact with me just use navigational buttons or ask any questions related to the argumentative writing. I will
+      be happy to assist you &#128515; </p>
+      <h4 class=\"subtitles\">Theoretical overview</h4>
+      <button class=\"chatSuggest\" onclick=\"chatSuggest('What is an argumentation?');\">What is an argumentation?</button>
+          <button class=\"chatSuggest\" onclick=\"chatSuggest('What is strength of opinion and how can I improve it?');\">What is strength of opinion and how can I improve it?</button>
+          <button class=\"chatSuggest\" onclick=\"chatSuggest('What is objectivity and how can I improve it?');\">What is objectivity and how can I improve it?</button>
+          <button class=\"chatSuggest\" onclick=\"chatSuggest('How can I learn argumentation skills?');\">How can I learn argumentation skills?</button>
+      <h4 class=\"subtitles\"> More information </h4>
+      <button class=\"chatSuggest\" onclick=\"chatSuggest('How can you help me more?');\">How can you help me, Writing Tutor?</button>"
   -
     - I want to learn more about the importance of the argumentation
     - "<p>Very good! What do you want to deal with first? &#129299;</p>
     <p>If you have questions about how to make your writing more persuasive, or if you want to learn more about argumentation in general, you've come to the right place!</p>
-    <h4>Theoretical overview</h4>
+    <h4 class=\"subtitles\">Theoretical overview</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('What is an argumentation?');\">What is an argumentation?</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('What is strength of opinion and how can I improve it??');\">What is strength of opinion and how can I improve it?</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('What is objectivity and how can I improve it?');\">What is objectivity and how can I improve it?</button>
-    <h4> Evaluation </h4>
+    <h4 class=\"subtitles\"> Evaluation </h4>
       <button class=\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Are you ready? Start evaluation</button>"
   -
     - Could we look at the theory?
     - "<p>Of course we can take a closer look at the theory! What do you want to investigate first? &#129299;</p>
            <p>If you have questions about how to make your essays more persuasive, or if you want to learn more about argumentation in general, you've come to the right place!</p>
-           <h4>Theoretical overview</h4>
+           <h4 class=\"subtitles\">Theoretical overview</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('What is an argumentation?');\">What is an argumentation?</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('What is strength of opinion and how can I improve it?');\">What is strength of opinion and how can I improve it?</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('What is objectivity and how can I improve it?');\">What is objectivity and how can I improve it?</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('How can I learn argumentation skills?');\">How can I learn argumentation skills?</button>
-    <h4> Evaluation </h4>
+    <h4 class=\"subtitles\"> Evaluation </h4>
          <button class=\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Are you ready? Start evaluation</button>"
   -
     - How is the sentiment measured?
@@ -137,9 +143,9 @@ conversations:
            <h4>Components of sentiment analysis</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('What is strength of opinion and how can I improve it?');\">What is strength of opinion and how can I improve it?</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('What is subjectivity/objectivity and how can I improve it?');\">What is subjectivity/objectivity and how can I improve it?</button>
-    <h4>Theoretical overview</h4>
+    <h4 class=\"subtitles\">Theoretical overview</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('I want to learn more about the basics of argumentation');\">Back</button>
-    <h4> Evaluation </h4>
+    <h4 class=\"subtitles\"> Evaluation </h4>
       <button class=\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Are you ready? Start evaluation</button>"
   -
 
@@ -148,10 +154,10 @@ conversations:
            The overall goal is to remain objective when writing argumentation.</p>
            <p> Learn more about argumentative writing here: </p>
     <button class=\"chatSuggest\" onclick=\"playVideo('rFIa48RZYfc');return false;\">Video: How to write an argumentative essay</button>
-    <h4>Theoretical overview</h4>
+    <h4 class=\"subtitles\">Theoretical overview</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Can you explain more about the structure of arguments?');\">Structure of the arguments</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('I want to learn more about the basics of argumentation');\">Back</button>
-    <h4> Evaluation </h4>
+    <h4 class=\"subtitles\"> Evaluation </h4>
           <button class=\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Are you ready? Start evaluation</button>"
   -
     - Start the evaluation process
@@ -161,11 +167,7 @@ conversations:
    <p><b>Please write a text of 250 to 300 words about the advantages and disadvantages of a year abroad. </b></p>
 
      <p>  Please ensure that your final essay is entered in full in the text box. This is important so that you get a complete analysis of the whole essay. If you only analyse a few paragraphs, you will get an incomplete overview of your essay.
-              After you have received the results, you can improve your essay according to the results. If you need help in certain areas, I am happy to help you. &#128522; </p>
-
-     <h4> Some suggestions for theory </h4>
-     <button class=\"chatSuggest\" onclick=\"chatSuggest('What is polarity and how can I improve it?');\">What is polarity and how can I improve it?</button>
-     <button class=\"chatSuggest\" onclick=\"chatSuggest('What is subjectivity/objectivity and how can I improve it?');\">What is subjectivity/objectivity and how can I improve it?</button>"
+              After you have received the results, you can improve your essay according to the results. If you need help in certain areas, I am happy to help you. &#128522; </p>"
   -
     - What else can you do?
     - "<p>Of course, I am eager to help you improve your reasoning skills, but a little fun and a short break can't hurt.</p>
@@ -174,12 +176,15 @@ conversations:
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Introduction');\">Back to the introduction</button>"
   -
     - Joke!
-    - "<p> Was sagt ein Krokodil, das einen Clown gefressen hat? 'Schmeckt komisch!' &#128584; &#128518;</p>
+    - "<p> I started crying when dad was cutting onions. Onions was such a good dog.!' &#128584; &#128518;</p>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Introduction');\">Back to the introduction</button>"
   -
     - I cannot do that.
     - "<p> I'm sorry, I can't do that. </p>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Introduction');\">Back to the introduction</button>"
+  -
+    - Motivate
+    - "You’re not completely useless. You can always be used as a bad example."
   -
     - Try again
     - "<p> Could you please try again? </p>
@@ -209,21 +214,21 @@ conversations:
            <p>
                I will help you to keep these aspects in mind and thus build a good and balanced argument structure. &#128521; </p>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('How else can you help me?');\"> How else can you help me?</button>
-    <h4> Theory </h4>
+    <h4 class=\"subtitles\"> Theory </h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Could we look at the theory?');\">Could we look at the theory?</button>
-   <h4> Evaluation </h4>
+   <h4 class=\"subtitles\"> Evaluation </h4>
             <button class=\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Are you ready? Start evaluation</button>"
   -
     - What is an argumentation?
     - "<p>The argumentation consists of a sequence of statements in which you support your thesis (assertion) with arguments (reasons) and evidence (e.g. provable facts).  &#128107;</p>
            <p>There are really great videos to learn a lot from. Here is one of my favourites so far:</p>
-           <h4>Learning material</h4>
+           <h4 class=\"subtitles\">Learning material</h4>
     <button class=\"chatSuggest\" onclick=\"playVideo('3gdMJ19QqRc');return false;\">Video: Types of arguments </button>
-    <h4>More Details</h4>
+    <h4 class=\"subtitles\">More Details</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Could you be more specific about the structure of arguments??');\">Structure of the arguments</button>
-    <h4>Theoretical overview</h4>
+    <h4 class=\"subtitles\">Theoretical overview</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('I want to learn more about the importance of the basic mood in my argumentation');\">Back</button>
-    <h4> Evaluation </h4>
+    <h4 class=\"subtitles\"> Evaluation </h4>
              <button class=\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Are you ready? Start evaluation</button>"
   -
     - Could you elaborate more on the structure of arguments?
@@ -232,13 +237,13 @@ conversations:
            For example, consider the following argument: ''Because there are more hours of sunshine in summer (reason 1) and people are outside more (reason 2), their mental health is better. (assertion). This can be seen, for example, in the lower suicide rates in the summer months (proof/example)''.
            This example illustrates how a basic argument is formed</p>.
            <p>There are several ways to structure an argument. The basic argument is the simplest structure to create a complete argument. </p>
-           <h4>Learning material</h4>
+           <h4 class=\"subtitles\">Learning material</h4>
            <p>Here is a great video that goes into more detail. </p>
     <button class=\"chatSuggest\" onclick=\"playVideo('YTU7D5R5fUo');return false;\">Video: different types of arguments</button>
-    <h4>Theoretical overview</h4>
+    <h4 class=\"subtitles\">Theoretical overview</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Could you tell me about the different parts of argumentative essay?');\">Could you tell me about the different parts of argumentative essay?</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('I want to learn more about the basics of argumentation');\">Back</button>
-    <h4> Evaluation </h4>
+    <h4 class=\"subtitles\"> Evaluation </h4>
              <button class=\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Are you ready? Start evaluation</button>"
   -
     - Can you tell me about the different parts of argumentative essays?
@@ -247,15 +252,15 @@ conversations:
            <p>The introduction section of an argumentation should, on the one hand, arouse the reader's interest and, on the other hand, lead to the topic without already anticipating the first arguments or basic thoughts. At the end of the introduction follows your thesis (assertion), so it is the last sentence of the introduction.</p> <p>The main body is where you make at least your thesis.
            <p>In the main part, at least three arguments are developed that support the thesis. Each argument justifies the thesis and forms its own section. Each argument is illustrated with an example or evidence.
            <p>The concluding section of an argument once again summarises in short words your now consolidated conviction (thesis) and makes it clear that there is only this one logical conclusion for you.</p>
-           <h4>Introduction, main body, conclusion</h4>.
+           <h4 class=\"subtitles\">Introduction, main body, conclusion</h4>.
            <p>Arguments - especially the arguments of the main body - should be presented objectively and factually to achieve the desired goal: to convince the reader.</p>
            <p>You should pay special attention to your emotional attitude when writing argumentation. In principle, it can be said that arguments should be kept neutral. However, this also depends on the context and the target group.
            With my help, you can always keep an eye on your emotional attitude!
     <button class=\"chatSuggest\" onclick=\"displayWebsite('www.smekenseducation.com/wp-content/uploads/bsk-pdf-manager/2020/06/Op_v_Pers_v_Arg.pdf');return false;\">Different writing styles for your essay</button>
-    <h4>Theoretical overview</h4>
+    <h4 class=\"subtitles\">Theoretical overview</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Could you explain more about the structure of arguments?');\">Structure of the argument</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('I want to learn more about the basics of argumentation');\">Back</button>
-    <h4> Evaluation </h4>
+    <h4 class=\"subtitles\"> Evaluation </h4>
              <button class=\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Are you ready? Start evaluation</button>"
   -
     - What is strength of opinion and how can I improve it?
@@ -265,8 +270,8 @@ conversations:
            It makes a difference whether you say 'I like the film' or 'I love the film'. So if you adjust your wording, your text will take on a slightly different emotional tone. You can also formulate your arguments in a very neutral way.
            You can also formulate your arguments in a very neutral way, which will give your essay a more balanced and serious tone. As you can see, there is no right or wrong. You simply have to consciously choose a style. &#128515;</p>
            <p>Do you already know which writing style you want to choose? Below you will find a detailed explanation of the different writing styles and their applications.
-           <h4>Theoretical overview</h4>
+           <h4 class=\"subtitles\">Theoretical overview</h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Could you explain more about the structure of arguments?');\">Structure of the argument</button>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('I want to learn more about the basics of argumentation');\">Back</button>
-    <h4> Evaluation </h4>
+    <h4 class=\"subtitles\"> Evaluation </h4>
              <button class=\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Are you ready? Start evaluation</button>"

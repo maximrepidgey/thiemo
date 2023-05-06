@@ -92,6 +92,11 @@ h3 {
 
 /*Ändern der Urzeit unterhalb der Chatbox*/
 
+h4.subtitles {
+  font-size: 1.2rem;
+  margin-bottom: 0.12rem;
+}
+
 h5 {
   color: grey;
   font-size: 10px;
@@ -282,7 +287,7 @@ a:not([href]):not([tabindex]) {
   /*width: 100vw; will get max screen*/
   display: inline-block;
   width: 100%;
-  height: calc(100vh - 64px); /*64 is the height of the header*/
+  height: calc(100vh - 72px); /*64 is the height of the header*/
   padding: 0 10px;
   box-sizing: border-box;
 
@@ -301,7 +306,8 @@ a:not([href]):not([tabindex]) {
 #feedback, #privacy, #answers, #help, #dashboard, #Detail, #dashboard-static, #dashboard-dynamic {
   /*width: 100vw; will get max screen*/
   width: 100%;
-  height: calc(100vh - 64px - 25px - 86px);
+  height: calc(100vh - 64px);
+  /*height: calc(100vh - 64px - 25px - 86px);*/
   padding: 30px;
   box-sizing: border-box;
 
@@ -320,7 +326,7 @@ a:not([href]):not([tabindex]) {
 
 
 #tutor {
-  margin-top: 45vh;
+  padding-top: 45vh;
   text-align: center;
 }
 
@@ -358,6 +364,12 @@ a:not([href]):not([tabindex]) {
 #feedback fieldset {
   border: none;
   width: 100%;
+}
+
+
+a:not([href]):not([tabindex]):hover {
+  color: inherit;
+  text-decoration: underline #b51f1f;
 }
 
 /****** Style Star Rating Widget *****/
@@ -570,7 +582,7 @@ fieldset.rating {
   /* box-sizing: border-box; */
   float: right;
   color: #ffffff;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 25px;
   background-color: var(--main-color); /*#b51f1f;*/
   border-radius: 10px;

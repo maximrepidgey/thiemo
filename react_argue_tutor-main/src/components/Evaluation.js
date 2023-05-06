@@ -123,7 +123,7 @@ class Evaluation extends React.Component {
         const timeout = new Promise((resolve, reject) => {
             setTimeout(() => {
                 reject(new Error('Request timed out'));
-            }, 30000); // Timeout after 30 seconds
+            }, 4*60*1000); // Timeout after 4 mins
         });
         //todo change to production
         Promise.race([fetch(CHATBOT_URL + "/tev", {

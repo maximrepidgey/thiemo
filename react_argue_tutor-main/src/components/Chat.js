@@ -181,6 +181,7 @@ class Chat extends React.Component {
      *          request of the user
      */
     getResponse(text) {
+        console.log(this.state.chatGPT)
         fetch(CHATBOT_URL + "/getResponse",
             {
                 method: "POST",
