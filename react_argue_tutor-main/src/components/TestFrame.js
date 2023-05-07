@@ -90,7 +90,7 @@ class TestFrame extends React.Component {
 
         // render privacy window
         if (this.state.showPrivacy) return (
-            <div className={"chatbot"} id="privacy">
+            <div className={"chatbot"} id="privacy" style={{paddingTop: "30vh"}}>
                 <h3>Declaration of consent</h3>
                 <p>Please read the consent form carefully.</p>
                 <p>
@@ -113,30 +113,14 @@ class TestFrame extends React.Component {
                                 this.setState({showPrivacy: false, showTutor: true})}}>
                         I consent.
                     </button>
-                    <div>
-                        <label>
-                            query:
-                            <textarea id={"query"}/>
-                        </label>
-                        <input type={"text"} id={"temperature"}/>
-                        <input type={"text"} id={"frequencyPenalty"}/>
-                        <input type={"text"} id={"presencePenalty"}/>
-                        <input type={"text"} id={"n"}/>
-                        <button type={"button"} id={"testb"} onClick={this.test}>
-                            submit
-                        </button>
-                        <div id={"res"}>
-
-                        </div>
-                    </div>
-                <a id="show-text-btn" className={"show-text-btn"} onClick={showText1}>Show Hidden Text</a>
+               {/* <a id="show-text-btn" className={"show-text-btn"} onClick={showText1}>Show Hidden Text</a>
                 <div id="hidden-text"  className={this.state.test1 ? " hidden-text show": "hidden-text hide" }>
                     <p>This is the hidden text that will appear with animation when the button is clicked. This is the hidden text that will appear with animation when the button is clicked. This is the hidden text that will appear with animation when the button is clicked. This is the hidden text that will appear with animation when the button is clicked. This is the hidden text that will appear with animation when the button is clicked. </p>
                 </div><br/>
                 <a id="show-text-btn" className={"show-text-btn"} onClick={showText2}>Show Hidden Text</a>
                 <div id="hidden-text"  className={this.state.test2 ? " hidden-text show": "hidden-text hide" }>
                     <p>This is the hidden text that will appear with animation when the button is clicked. This is the hidden text that will appear with animation when the button is clicked. This is the hidden text that will appear with animation when the button is clicked. This is the hidden text that will appear with animation when the button is clicked. This is the hidden text that will appear with animation when the button is clicked. </p>
-                </div>
+                </div>*/}
             </div>)
         // render introduction screen
         else if (this.state.showTutor) return (

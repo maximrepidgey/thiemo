@@ -30,8 +30,8 @@ class DashboardDynamic extends React.Component {
         ]
 
         const ratingsConciseness = [
-            {low: -1, high: 20, text: "Not concise at all"},
-            {low: 20, high: 40, text: "Not concise"},
+            {low: -1, high: 20, text: "Not concise"},
+            {low: 20, high: 40, text: "Poorly concise"},
             {low: 40, high: 60, text: "Neutral"},
             {low: 60, high: 80, text: "concise"},
             {low: 80, high: 110, text: "Very concise"},
@@ -59,7 +59,7 @@ class DashboardDynamic extends React.Component {
             ...prevState,
             infoShow: {
                 ...prevState.infoShow,
-                [el]: {reason: !this.state.infoShow[el].reason, improvement: this.state.infoShow[el].improvement}
+                [el]: {reason: !this.state.infoShow[el].reason, improvement: prevState.infoShow[el].improvement, ratings: prevState.infoShow[el].ratings}
             }
         }))
     }
@@ -70,7 +70,7 @@ class DashboardDynamic extends React.Component {
             ...prevState,
             infoShow: {
                 ...prevState.infoShow,
-                [el]: {reason: this.state.infoShow[el].reason, improvement: !this.state.infoShow[el].improvement}
+                [el]: {reason: prevState.infoShow[el].reason, improvement: !this.state.infoShow[el].improvement, ratings: prevState.infoShow[el].ratings}
             }
         }))
     }
