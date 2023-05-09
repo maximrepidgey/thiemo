@@ -1,6 +1,8 @@
 import Swal from "sweetalert";
 
 import stopWords from "../stop_words_english.json"
+// const CHATBOT_URL = "http://www.writingtutor.ch:8007";
+// const CHATBOT_URL = "http://writingtutor.ch:8006";
 const CHATBOT_URL = "http://127.0.0.1:8006";
 export {CHATBOT_URL}
 

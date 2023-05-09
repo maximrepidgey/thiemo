@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './static/stylesheet/style.css';
 import './static/stylesheet/normalize.css';
 import './static/stylesheet/epfl.css';
+// import './static/stylesheet/control_experiment/style2_Test.css'
 
 import {TestFrame} from "./components/TestFrame";
 

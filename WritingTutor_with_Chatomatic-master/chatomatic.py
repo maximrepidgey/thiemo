@@ -54,15 +54,6 @@ class Chatomatic:
         self.language = language
         self._load_from_dataset(file_path)
 
-        # f = open(file_path, 'r', encoding="utf-8")
-        # content = f.read()
-        # f.close()
-
-    # def add_dataset(self, file_path, language="en"):
-    #     if not language in self.qa_databases:
-    #         self.qa_databases[language] = QADatabase()
-    #     self.load_from_dataset(file_path, self.qa_databases[language])
-
     def find_answer_to_question(self, question):
         """
         Finds an exact match to the question prompted by the user. Used for buttons especially.

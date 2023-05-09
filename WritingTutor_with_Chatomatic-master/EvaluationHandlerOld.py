@@ -26,7 +26,6 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration, T5Config
 # nlp_de.add_pipe("spacytextblob", config=config)
 
 # for google translate:
-translator = Translator()
 # from google_trans_new import google_translator
 # translator = google_translator()
 
@@ -68,10 +67,11 @@ def __get_summary(text):
     return output
 
 
-def __translate_to_english(text):
+def __translate_to_english(text, source):
     # Google translate:
+    translator = Translator()
     # translated_text = translator.translate(text.replace("\n", "\n"), lang_tgt='en')
-    translated_text = translator.translate(text=text.replace("\n", "\n"), src='de', dest='en').text
+    translated_text = translator.translate(text=text.replace("\n", "\n"), src=source, dest='en').text
     return translated_text
 
 

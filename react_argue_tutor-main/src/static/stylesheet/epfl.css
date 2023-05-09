@@ -1,6 +1,7 @@
 @import url('/../stylesheet/normalize.css');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap'); /*Uni St.Gallen Farbcode : grün: #00762C  light green: #009135 weiß: #ffffff*/
 
+
 :root {
     --main-color:#b51f1f;
     --gpt-color:#35BC55;

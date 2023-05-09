@@ -126,7 +126,7 @@ class Evaluation extends React.Component {
             }, 4*60*1000); // Timeout after 4 mins
         });
         //todo change to production
-        Promise.race([fetch(CHATBOT_URL + "/tev", {
+        Promise.race([fetch(CHATBOT_URL + "/evaluate", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'

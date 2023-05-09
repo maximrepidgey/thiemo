@@ -2,10 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import csv
-import logging
 import os
-from time import gmtime, strftime
-import requests
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime
 from dateTime import getTime, getDate
@@ -15,51 +12,42 @@ import nltk
 import openai
 from chatomatic import *
 from flask_cors import *
-from multiprocessing import Pool
 from celery import Celery, group
-
-
-import EvaluationHandler
-
-# chatGPT configuration
-OPENAIKEY = "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"
-openai.api_key = OPENAIKEY
-MODEL = "gpt-3.5-turbo"
-
+# import evaluation
+from evaluation import EnglishEvaluation, GermanEvaluation
 
 nltk.download("punkt")
+
+# chatGPT configuration
+OPENAIKEY = os.getenv("OPENAIKEY")
+openai.api_key = OPENAIKEY
+MODEL = "gpt-3.5-turbo"
 
 # Initialize Flask for webapp
 application = Flask(__name__)
 application.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 FLASK_PORT = 8006  # use 8080 for local setup
-
+SERVER_IP = os.getenv("FLASK")
+# configure redis and Celery
 application.config['CELERY_BROKER_URL'] = 'redis://localhost:6379'
 application.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379'
 
 celery = Celery(application.name, broker=application.config['CELERY_BROKER_URL'])
 celery.conf.update(application.config)
 
-
-# class ContextTask(celery.Task):
-#     def __call__(self, *args, **kwargs):
-#         with app.app_context():
-#             return self.run(*args, **kwargs)
-#
-#
-# celery.Task = ContextTask
-
-
 CORS(application)
 
+# create an instance of the chatbot of different languages
+chatomaticEN = Chatomatic("data/DialoguesEN.yml", language="en")
+chatomaticDE = Chatomatic("data/Dialogues.yml", language="de")
+
 # Application settings
-# logging.basicConfig(level=logging.DEBUG)
-currentPath = os.path.dirname(os.path.abspath(__file__))  # Current absolute file path
-# logging.debug("Current path: " + currentPath)
+# currentPath = os.path.dirname(os.path.abspath(__file__))  # Current absolute file path
 
 # Chatbot settings
 useGoogle = "no"  # Yes - Bei nicht wissen durchsucht der Bot google nach dem unbekannten Begriff und gibt einen Link. No - Google wird nicht zur Hilfe gezogen
 confidenceLevel = 0.70  # Bot confidence level - Muss zwischen 0 und 1 liegen. Je höher der Wert, desto sicherer muss sich der Bot seiner Antwort sein
+EVALUATION_STARTED = False
 
 # Initialize dateTime util
 now = datetime.now(pytz.timezone("Europe/Berlin"))
@@ -73,8 +61,6 @@ if now.minute < 10:
 chatBotDate = strftime("%d.%m.%Y, %H:%M", localtime())
 chatBotTime = strftime("%H:%M", localtime())
 
-# create an instance of the chatbot
-chatomatic = Chatomatic("data/DialoguesEN.yml", language="en")
 
 # Google fallback if response == IDKresponse
 def tryGoogle(myQuery):
@@ -99,10 +85,7 @@ def writeCsv(filePath, data):
 def home_emma():
     return render_template("index.html")
 
-EVALUATION_STARTED = False
 
-
-# todo when the person is ready for evaluation, pass the question to the static mechanism to describe the essay
 # Flask route for getting bot responses
 @application.route("/getResponse", methods=["POST"])
 def get_bot_response():
@@ -122,7 +105,7 @@ def get_bot_response():
         botReply = openai.ChatCompletion.create(
             model=MODEL,
             messages=[
-                {"role": "system", "content": "Act as writing tutor that helps students to write an argumentative essay."},
+                {"role": "system", "content": "Act as writing tutor that helps students to write an argumentative essay. Provide concise answers."},
                 {"role": "user", "content": "can you give me some suggestions about the theory of argumentative writing"},
                 {"role": "assistant", "content": "I can suggest learning these topics: " + ", ".join(topics)},
                 {"role": "user", "content": text},
@@ -132,7 +115,6 @@ def get_bot_response():
             temperature=0.5, # default 1, higher more random, lower --> more deterministic
             frequency_penalty=0.4,  # default 0 [-2,2], penalize repetition in explanation of theory
         )
-        # todo a system for suggestion; create a set of possible suggestions and propose them to user
         botReply = botReply['choices'][0]['message']['content']
         botReply = "<p>"+botReply+"</p>"
         suggestions = random.sample(topics, 2)  # list of 2 random suggestions
@@ -150,7 +132,9 @@ def get_bot_response():
             EVALUATION_STARTED = True
 
         try:
-            botReply = str(chatomatic.answer(text))
+            # todo get language from request and use correspoing chatbot
+            bot = switch_chatbot("")
+            botReply = str(bot.answer(text))
         except Exception as e:
             print("Exception---------------")
             print(e)
@@ -163,7 +147,7 @@ def get_bot_response():
         elif botReply == "getDATE":
             botReply = getDate()
 
-    writeCsv(currentPath + "/log/botLog.csv", [text, botReply])
+    # writeCsv(currentPath + "/log/botLog.csv", [text, botReply])
     data = {"botReply": botReply}
     return jsonify(data)
 
@@ -178,44 +162,12 @@ def send_feedback():
     text = data.get("text")
     improvement = data.get("improve")
 
-    writeCsv(
-        currentPath + "/log/evaluationFeedback.csv",
-        [bot, rating, text, improvement],
-    )
+    # writeCsv(
+    #     currentPath + "/log/evaluationFeedback.csv",
+    #     [bot, rating, text, improvement],
+    # )
 
     return jsonify({"success": True}, 200, {"ContentType": "application/json"})
-
-
-@application.route("/test", methods=["POST"])
-def test():
-    """
-    Provides feedback of the argumentative essay using chatGPT.
-    """
-    text = request.get_json().get("text")
-
-    query = text["query"]
-    temperature = float(text["temperature"])
-    frequency_penalty = float(text["frequencyPenalty"])
-    presence_penalty = float(text["presencePenalty"])
-    n = int(text["n"])
-
-    botReply = openai.ChatCompletion.create(
-        model=MODEL,
-        messages=[
-            {"role": "system", "content": "You provide feedback for argumentative text."},
-            {"role": "user", "content": query},
-        ],
-        temperature=temperature,
-        frequency_penalty=frequency_penalty,
-        presence_penalty=presence_penalty,
-        n=n,
-    )
-    print(botReply)
-
-    botReply = botReply['choices'][0]['message']['content']
-
-    data = {"botReply": botReply}
-    return jsonify(data)
 
 
 def gpt_reply(query, temperature=1.0, frequency_penalty=0.0, presence_penalty=0.0, n=1, system="You provide feedback for argumentative text."):
@@ -248,28 +200,28 @@ def gpt_reply_evaluation(info):
     for i in range(score_iter):
         res += float(scores['choices'][i]['message']['content'])
 
-    # todo round the score to some value
     res /= score_iter  # average score of the score
     res = round(res, 2)  # round to 2 decimanls
-    print("score: {}".format(res))
+    # print("score: {}".format(res))
 
     query = "you rated this text with {} out of 5 for {}, explain why. Also provide concrete examples from the text. " \
             "Write not more than a paragraph. \nText: {}".format(res, detail, text)
 
     reason = gpt_reply(query, 1.1, 0.2, 0.6)
     reason = reason['choices'][0]['message']['content']
-    print("reason: {}".format(reason))
+    # print("reason: {}".format(reason))
 
     # produce many tokes
     query = "how can you improve this text in terms of {}. Provide three concrete examples. \nText: {}".format(detail, text)
     improvement = gpt_reply(query, 0.8, 0.4, 0.6)
     improvement = improvement['choices'][0]['message']['content']
-    print("improvement: {}".format(improvement))
+    # print("improvement: {}".format(improvement))
     if detail == "argumentative structure": # rename argumentative structure to structure to facilitate variable passing to frontend
         detail = "structure"
 
     return {"info": detail, "score": res, "reason": reason, "improvement": improvement}
 
+# todo multi language: if lang==de, add to chatgpt: "please answer in german" use switch to map de to german
 
 @application.route("/evaluate", methods=["POST"])
 def evaluate():
@@ -277,6 +229,7 @@ def evaluate():
     Provides feedback of the argumentative essay using chatGPT.
     """
     text = request.get_json().get("text")
+    text = text.replace("\\n", "\n")
 
     # feedback request
     evaluations = ["readability", "objectivity", "conciseness", "argumentative structure"]
@@ -296,14 +249,11 @@ def evaluate():
     general = gpt_reply("Provide a feedback for the text. write only one paragraph. \n Text: {}".format(text), 0.8, 0.3, 0.4)
     general = general['choices'][0]['message']['content']
     final.update({"general": general})  # add general feedback to the reply
-    print("------final------")
-    print(final)
-    print("---------------")
+
     return jsonify(final)
 
 @application.route("/tev", methods=["POST"])
 def route_test():
-    received_text = request.get_json().get("text")
 
     data ={'readability': {'info': 'readability', 'score': 2.5625,
                      'reason': 'The text has a low readability score because of its language, style and tone. The author uses exaggeration to emphasize their point of view but the over-the-top language detracts from it. For example, in the introduction, the author claims that broccoli is the worst vegetable ever, which is an extreme assertion and not supported by facts. Moreover, the essay lacks coherence and logical flow. The main points outlined in each body paragraph are not well-connected, causing the argument to come across as disjointed. For instance, paragraph three abruptly switches topics from the resource drain on society to health concerns over consuming broccoli. In short, the essay would benefit from clearer argumentation and more persuasive language that presents harder evidence to support its claims.',
@@ -333,32 +283,29 @@ def receive_text():
     # receive text from front-end
     received_text = request.get_json().get("text")
     received_text = received_text.replace("\\n", "\n")
+    # todo receive the language on backend
+    lang = ""
 
-    # used for not english text
-    # translated_text = EvaluationHandler.__translate_to_english(received_text)
-
-    sentences = EvaluationHandler.__sentences(received_text)
-
-    sub = EvaluationHandler.__get_subjective(received_text)  # examines sub and pol
-    pol = EvaluationHandler.__get_polarity(received_text)
-    summary = EvaluationHandler.__get_summary(received_text)
-    ascending_sentence_polarities = EvaluationHandler.__get_asc_polarity_per_sentence(sentences)
-    ascending_sentence_subjectivities = EvaluationHandler.__get_asc_subjectivity_per_sentence(sentences)
-    emotions = EvaluationHandler.__get_emotion(received_text)
-
-    data = {
-        "subjectivity": sub,
-        "polarity": pol,
-        "summary": summary,
-        "text": received_text,
-        "pol_per_sentence": ascending_sentence_polarities,
-        "sub_per_sentence": ascending_sentence_subjectivities,
-        "emotions": emotions
-    }
+    # create evaluation mechanism and run it
+    evaluation_handler = switch(lang, received_text)
+    data = evaluation_handler.run()
 
     return jsonify(data)
 
 
+def switch(lang, text):
+    if lang == "en":
+        return EnglishEvaluation.EnglishEvaluation(text)
+    elif lang == "de":
+        return GermanEvaluation.GermanEvaluation(text)
+
+
+def switch_chatbot(lang):
+    if lang == "en":
+        return chatomaticEN
+    elif lang == "de":
+        return chatomaticDE
+
 if __name__ == "__main__":
     # using debug=True makes GPT unavailable
-    application.run(host="127.0.0.1", port=FLASK_PORT, threaded=True)
+    application.run(host=SERVER_IP, port=FLASK_PORT, threaded=True)
