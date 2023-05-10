@@ -1,8 +1,6 @@
 import Swal from "sweetalert";
 
 import stopWords from "../stop_words_english.json"
-// const CHATBOT_URL = "http://www.writingtutor.ch:8007";
-// const CHATBOT_URL = "http://writingtutor.ch:8006";
 const CHATBOT_URL = "http://127.0.0.1:8006";
 export {CHATBOT_URL}
 
@@ -327,11 +325,14 @@ function computeDashboard(subjectivity, polarity, userText, sentences, addOnClic
     let box2 = "p";
 
     clearDashboardBoxes();
+    console.log("check 1")
 
     // addOnClickToReloadPage()
 
 
     document.getElementById('userDashboardText').innerHTML = addHighlighFunctionalityToTopKeywords(userText, topKeywords);
+    console.log("check 2")
+
 
     if (0.0 <= subjectivity && subjectivity <= 0.2) box += "1";
     if (0.2 < subjectivity && subjectivity <= 0.4) box += "2";
@@ -339,16 +340,20 @@ function computeDashboard(subjectivity, polarity, userText, sentences, addOnClic
     if (0.6 < subjectivity && subjectivity <= 0.8) box += "4";
     if (0.8 < subjectivity && subjectivity <= 1.0) box += "5";
     document.getElementById(box).style.backgroundColor = "rgba(0,255, 0, 0.75)";
+    console.log("check 3")
 
     if (-1.0 <= polarity && polarity <= -0.6) box2 += "1";
     if (-0.6 < polarity && polarity <= -0.2) box2 += "2";
     if (-0.2 < polarity && polarity <= 0.2) box2 += "3";
     if (0.2 < polarity && polarity <= 0.6) box2 += "4";
     if (0.6 < polarity && polarity <= 1.0) box2 += "5";
+    console.log("check 4")
 
     document.getElementById(box2).style.backgroundColor = "rgba(0,255, 0, 0.75)";
     writtenPolarity(polarity);
     writtenSubjectivity(subjectivity);
+    console.log("check 5")
+
 
     Swal({
         title: 'Your Dashboard is ready!',

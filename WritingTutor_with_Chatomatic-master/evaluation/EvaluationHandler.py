@@ -16,11 +16,11 @@ class EvaluationHandler(ABC):
         self.language = language
         self.nlp = None  # to be initialized in subclass
 
-    def get_text(self):
-        return self.text
-
     def define_nlp(self, way):
         self.nlp = way
+
+    def get_text(self):
+        return self.text
 
     @abstractmethod
     def _sentences(self):
@@ -43,7 +43,9 @@ class EvaluationHandler(ABC):
         # Google translate:
         translator = Translator()
         # translated_text = translator.translate(text.replace("\n", "\n"), lang_tgt='en')
-        translated_text = translator.translate(text=text.replace("\n", "\n"), src=self.language, dest='en').text
+        print("text to translate")
+        print(text)
+        translated_text = translator.translate(text.replace("\n", "\n"), src=self.language, dest='en').text
         return translated_text
 
     def _get_asc_subjectivity_per_sentence(self, sentences):
@@ -70,9 +72,6 @@ class EvaluationHandler(ABC):
     def _get_emotion(self):
         # this method uses translated text
         text = self.text
-        print("emotion text")
-        print(self.text)
-        print("-----")
         if self.language != "en":
             text = self._translate_to_english(self.text)
 
@@ -105,6 +104,10 @@ class EvaluationHandler(ABC):
         return emotion_averages[0]
 
     def run(self):
+        """
+        Execute complete static evaluation of the text.
+        :return dict: a dict with all the relevant evaluation results.
+        """
         sentences = self._sentences()
         final = {
             "subjectivity": self._get_subjective(),

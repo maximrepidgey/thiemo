@@ -2,8 +2,8 @@ import React from "react";
 import Swal from 'sweetalert';
 
 import {
-    CHATBOT_URL,
     getTime,
+    CHATBOT_URL
 } from "../static/javascript/ArgueTutorEn";
 
 import {
@@ -13,6 +13,7 @@ import {
     showCloseFeedbackButton,
     showOpenFeedbackButton,
 } from "../static/javascript/hideShow"
+
 
 class Chat extends React.Component {
 
@@ -114,7 +115,8 @@ class Chat extends React.Component {
             chatGPTColor: false,
             chatGPT: props.chatGPT,
             IDKcounter: 0,
-            evaluationRunning: false
+            evaluationRunning: false,
+            language: props.language
         };
     }
 
@@ -181,14 +183,13 @@ class Chat extends React.Component {
      *          request of the user
      */
     getResponse(text) {
-        console.log(this.state.chatGPT)
         fetch(CHATBOT_URL + "/getResponse",
             {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({gpt: this.state.chatGPT, text: text})
+                body: JSON.stringify({gpt: this.state.chatGPT, text: text, language: this.state.language})
             })
             .then(response => {
                 return response.json()
@@ -196,7 +197,7 @@ class Chat extends React.Component {
             .then(data => {
                 let botReply = data.botReply;
                 this.addBotMessage(botReply);
-            });
+            })
     }
 
 

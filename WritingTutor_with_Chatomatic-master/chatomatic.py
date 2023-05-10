@@ -80,8 +80,6 @@ class Chatomatic:
         # compute the similarity and find the best match
         cos_scores = util.pytorch_cos_sim(sentence_embedding, corpus_embeddings)[0]
         top_result = np.argpartition(-cos_scores, range(1))[0]
-        print("best result")
-        print(self.questions[top_result])
         return self.questions[top_result]
 
     def _find_most_similar_question_bm25(self, question):

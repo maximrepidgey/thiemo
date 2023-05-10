@@ -216,9 +216,7 @@ conversations:
     <h4> Lernen </h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Ich möchte mehr über die Bedeutung der Grundstimmung in meiner Argumentation lernen');\">Ich möchte die Überzeugungskraft meiner arguementativen Texte verbessern</button>
     <h4> Weitere Informationen </h4>
-    <button class=\"chatSuggest\" onclick=\"chatSuggest('Wie kannst du mir helfen, Writing Tutor?');\">Wie kannst du mir helfen, Writing Tutor?</button>
-    <h4> Bewertung </h4>
-    <button class=\"chatSuggest\" onclick=\"chatSuggest('Bewertungsprozess starten');\">Bist du bereit? Bewertung starten</button>"
+    <button class=\"chatSuggest\" onclick=\"chatSuggest('Wie kannst du mir helfen, Writing Tutor?');\">Wie kannst du mir helfen, Writing Tutor?</button>"
   -
     - Ich möchte mehr über die Bedeutung von Gefühlen in meiner Argumentation lernen
     - "<p>Sehr gut! Womit möchtest du dich zuerst befassen? &#129299;</p>
@@ -275,10 +273,7 @@ conversations:
 
      <h4> Einige Vorschläge zur Theorie </h4>
      <button class=\"chatSuggest\" onclick=\"chatSuggest('Was ist Polarität und wie kann ich sie verbessern?');\">Was ist Meinungsstärke und wie kann ich sie verbessern?</button>
-     <button class=\"chatSuggest\" onclick=\"chatSuggest('Was ist Subjektivität/Objektivität und wie kann ich sie verbessern?');\">Was ist Subjektivität/Objektivität und wie kann ich sie verbessern?</button>
-
-     <h4> Bewertung </h4>
-     <button class=\"chatSuggest\" onclick=\"displayELEA('5001/');return false;\">Textfeld öffnen</button>"
+     <button class=\"chatSuggest\" onclick=\"chatSuggest('Was ist Subjektivität/Objektivität und wie kann ich sie verbessern?');\">Was ist Subjektivität/Objektivität und wie kann ich sie verbessern?</button>"
   -
     - Was können Sie sonst noch tun?
     - "<p> Natürlich bin ich bestrebt, Ihnen zu helfen, Ihre Argumentationsfähigkeit zu verbessern, aber ein bisschen Spaß und eine kurze Pause können nicht schaden.</p>

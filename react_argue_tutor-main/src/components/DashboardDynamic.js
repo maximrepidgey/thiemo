@@ -5,6 +5,8 @@ class DashboardDynamic extends React.Component {
     constructor(props) {
         super(props);
 
+        // todo change evaluation in other language
+
         const ratingsObjectivity = [
             {low: -1, high: 20, text: "Very subjective"},
             {low: 20, high: 40, text: "subjective"},

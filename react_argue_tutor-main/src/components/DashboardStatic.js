@@ -221,8 +221,5 @@ class DashboardStatic extends React.Component{
         )
     }
 }
-// use memo to memorize the component data
-// export const DashboardStatic = React.memo(DashboardStaticE)
-
 
 export {DashboardStatic}

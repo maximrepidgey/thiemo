@@ -2,3 +2,4 @@
 .idea
 *.rdb
 .env
+extra

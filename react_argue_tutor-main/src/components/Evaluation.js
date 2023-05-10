@@ -3,14 +3,12 @@ import React from "react";
 import Swal from "sweetalert";
 
 import {
-    CHATBOT_URL,
-    computeDashboard, computeEssayStats, getTopSentences,
+    computeDashboard, computeEssayStats, getTopSentences, CHATBOT_URL,
     highlightKeyword, highlightTopNPolaritySentences, highlightTopNSubjectivitySentences,
 } from "../static/javascript/ArgueTutorEn";
 
 import {DashboardDynamic} from "./DashboardDynamic";
 import {DashboardStatic} from "./DashboardStatic";
-
 
 class Evaluation extends React.Component {
 
@@ -58,14 +56,7 @@ class Evaluation extends React.Component {
             loading: false,
             ascPolSentences: [[]],
             ascSubSentences: [[]],
-            /*dynamicProps: {
-                text: "",
-                general: "",
-                readability: {"info": "readability", "score": 1, "reason": "", "improvement": ""},
-                structure: {"info": "structure", "score": 1, "reason": "", "improvement": ""},
-                objectivity: {"info": "objectivity", "score": 1, "reason": "", "improvement": ""},
-                conciseness: {"info": "conciseness", "score": 1, "reason": "", "improvement": ""}
-            }*/
+            language: props.language,
             dynamicProps: {}
         };
     }
@@ -131,7 +122,7 @@ class Evaluation extends React.Component {
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
-                body: JSON.stringify({text: text})
+                body: JSON.stringify({text: text, language: this.state.language})
             }), timeout]
         ).then(response => response.json()
         ).then(data => {
@@ -177,7 +168,7 @@ class Evaluation extends React.Component {
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
-                body: JSON.stringify({text: text})
+                body: JSON.stringify({text: text, language: this.state.language})
             }), timeout]
         ).then(response => response.json()
         ).then(data => {
@@ -295,11 +286,12 @@ class Evaluation extends React.Component {
                     </div>
 
                     {/*dynamic dashboard is using proper react, therefore this is design is used to run properly the code. Ideally static evaluation should also become react*/}
-                    {this.state.showDashboard && this.state.dashboardIsComputed && this.state.dynamic ? <DashboardDynamic {...this.state.dynamicProps} text={this.state.text}/> : <React.Fragment/>}
+                    {this.state.showDashboard && this.state.dashboardIsComputed && this.state.dynamic ? <DashboardDynamic {...this.state.dynamicProps} text={this.state.text} language={this.state.language}/> : <React.Fragment/>}
 
-                    {/*use awful style reference to avoid unmounting of the component*/}
+                    {/*use awful style reference to avoid unmounting of the component, static part must be rendered because
+                    getElementById function requires element to be rendered*/}
                     <span style={{display: this.state.showDashboard && this.state.dashboardIsComputed? "": "none"}}>
-                        {this.state.dynamic?  <React.Fragment/> :  <DashboardStatic showSubjectivitySources={this.showSubjectivitySources} showPolaritySources={this.showPolaritySources} text={this.state.text}/>}
+                        {this.state.dynamic?  <React.Fragment/> :  <DashboardStatic showSubjectivitySources={this.showSubjectivitySources} showPolaritySources={this.showPolaritySources} text={this.state.text} language={this.state.language}/>}
                         {/*<DashboardDynamic text={this.state.text} style={{display: this.state.dynamic ? "": "none"}}/>*/}
                         {/*<DashboardStatic text={this.state.text}  style={{display: this.state.dynamic ? "none": ""}}/>*/}
                     </span>
@@ -326,35 +318,6 @@ class Evaluation extends React.Component {
                             Evaluate the text
                         </button>
                     </div>
-                    {/*{this.state.showDashboard && this.state.dashboardIsComputed ? // renders evaluation dashboard otherwise renders the text box
-                        this.state.dynamic ?
-                            <DashboardDynamic text={this.state.text}/> :
-                            <DashboardStatic text={this.state.text}/>
-                    :
-                        <div id="ELEAIframeTemplate">
-                            <form method="post">
-                                <label style={{display: "block", fontSize: "x-large", marginBottom: "0.5rem", marginTop: "0.5rem"}}>
-                                    Evaluation Text box
-                                </label>
-                                <div className="w3-display-left">
-                                    <div className="ehi-wordcount-container">
-                                        <label htmlFor="evalution_textarea"/>
-
-                                        <div id={"loadingEvaluationAnimation"} style={{display: "none"}}>
-                                            <ClapSpinner size={40} color="#686769" loading={true}/>
-                                        </div>
-                                        <textarea spellCheck={true} className="text" rows={25} cols={25} name="evaluationText"
-                                                  id="evalution_textarea" placeholder="Enter your text here..." defaultValue={""}/>
-                                    </div>
-                                </div>
-                            </form>
-                            <button className="buttonEval" id="button-eval" onClick={this.evaluationChatSuggest}>
-                                Evaluate the text
-                            </button>
-                        </div>
-                    }*/}
-
-
                 </div>
             </div>
         )
