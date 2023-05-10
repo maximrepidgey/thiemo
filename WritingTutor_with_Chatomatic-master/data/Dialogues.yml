@@ -218,6 +218,22 @@ conversations:
     <h4> Weitere Informationen </h4>
     <button class=\"chatSuggest\" onclick=\"chatSuggest('Wie kannst du mir helfen, Writing Tutor?');\">Wie kannst du mir helfen, Writing Tutor?</button>"
   -
+    - StartGPT
+    - "<p>Hallo, ich bin WritingTutor. Ich helfe dir, deine argumentativen Texte noch überzeugender zu gestalten.</p>
+               <p>Zu diesem Zweck werden wir uns gemeinsam einige theoretische Grundlagen ansehen. Gleichzeitig möchte ich Sie für die Macht der Meinung und Objektivität in Ihren Texten sensibilisieren.
+                Ich werde Ihnen erklären, was ich damit meine. Schließlich werden Sie das Gelernte anwenden, damit ich Ihnen ein Feedback zu Ihrer Argumentation geben kann. Ich werde Ihren Text im Hinblick auf Meinungsstärke und Objektivität analysieren.
+                Die Ergebnisse meiner Analyse und meine theoretischen Inputs werden Ihnen hoffentlich helfen, noch überzeugendere Argumente zu schreiben! </p>
+                <p>Ich bin noch in der Ausbildung, aber ich werde mein Bestes tun, um Ihnen zu helfen! Versuchen Sie, mit den Schaltflächen durch die Lernumgebung zu navigieren &#128515; </p>
+               <p>Ich baue chatGPT auf, um mit mir zu interagieren, benutze einfach die Navigationsschaltflächen oder stelle Fragen, die sich auf das Schreiben von Argumenten beziehen. I will
+               gerne zur Verfügung stehen &#128515; </p>
+        <h4 class=\"subtitles\">Lernen</h4>
+        <button class=\"chatSuggest\" onclick=\"chatSuggest('Was ist überhaupt eine Argumentation?');\">Was ist überhaupt eine Argumentation?</button>
+            <button class=\"chatSuggest\" onclick=\"chatSuggest('Was ist Meinungsstärke und wie kann ich sie verbessern?');\">Was ist Meinungsstärke und wie kann ich sie verbessern?</button>
+            <button class=\"chatSuggest\" onclick=\"chatSuggest('Was ist Objektivität und wie kann ich sie verbessern?');\">Was ist Objektivität und wie kann ich sie verbessern?</button>
+            <button class=\"chatSuggest\" onclick=\"chatSuggest('How can I learn argumentation skills?');\">How can I learn argumentation skills?</button>
+        <h4 class=\"subtitles\"> Mehr informationen </h4>
+        <button class=\"chatSuggest\" onclick=\"chatSuggest('Wie können Sie mir helfen?');\">Wie können Sie mir helfen, Writing Tutor?</button>"
+  -
     - Ich möchte mehr über die Bedeutung von Gefühlen in meiner Argumentation lernen
     - "<p>Sehr gut! Womit möchtest du dich zuerst befassen? &#129299;</p>
     <p>Wenn du Fragen dazu hast, wie du deine Texte überzeugender gestalten kannst, oder wenn du mehr über Argumentationen im Allgemeinen erfahren möchtest, bist du hier genau richtig!</p>

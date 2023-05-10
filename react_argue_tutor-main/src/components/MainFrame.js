@@ -9,11 +9,11 @@ class MainFrame extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            chatGPT: false,
+            chatGPT: true,
             showPrivacy: true,
             showTutor: false,
             showEvaluationSelection: false,
-            evaluationDynamic: false,
+            evaluationDynamic: true,
             language: "",
         };
 

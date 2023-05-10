@@ -286,20 +286,6 @@ def receive_text():
     return jsonify(data)
 
 
-# def switch_evaluation(lang, text):
-#     if lang == "en":
-#         return EnglishEvaluation.EnglishEvaluation(text)
-#     elif lang == "de":
-#         return GermanEvaluation.GermanEvaluation(text)
-#
-#
-# def switch_chatbot(lang):
-#     if lang == "en":
-#         return chatomaticEN
-#     elif lang == "de":
-#         return chatomaticDE
-
-
 def switch(lang, text=""):
     if lang == "en":
         return {"language": "English", "chatbot": chatomaticEN, "evaluation": EnglishEvaluation.EnglishEvaluation(text)}
