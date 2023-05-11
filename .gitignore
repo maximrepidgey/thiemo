@@ -3,3 +3,4 @@
 *.rdb
 .env
 extra
+startCelery.sh

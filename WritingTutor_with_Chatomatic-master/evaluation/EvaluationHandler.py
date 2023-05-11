@@ -1,13 +1,19 @@
 import nltk
-from googletrans import Translator
+# from googletrans import Translator
 from transformers import pipeline
 from abc import abstractmethod, ABC
+import deepl
+import os
 
 # for google translate:
 # from google_trans_new import google_translator
-# translator = google_translator()
+# Translator = google_translator()
 
 emotion_classifier = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", top_k=None)
+# translator = Translator()
+# AUTH_KEY = os.getenv("DEEPL")
+AUTH_KEY = "5059a476-d954-7276-e1f3-3bd7f3da166a:fx"
+translator = deepl.Translator(AUTH_KEY)
 
 
 class EvaluationHandler(ABC):
@@ -41,21 +47,29 @@ class EvaluationHandler(ABC):
 
     def _translate_to_english(self, text):
         # Google translate:
-        translator = Translator()
         # translated_text = translator.translate(text.replace("\n", "\n"), lang_tgt='en')
         print("text to translate")
         print(text)
-        translated_text = translator.translate(text.replace("\n", "\n"), src=self.language, dest='en').text
+        # translated_text = translator.translate(text, src=self.language, dest='en').text
+        translated_text = translator.translate_text(text, target_lang="EN-US", source_lang=self.language.upper()).text
+        print("translated")
+        print(translated_text)
         return translated_text
 
     def _get_asc_subjectivity_per_sentence(self, sentences):
         # used in every language different from
         subjectivities = set()
+        # text = self.text
+        # text = self._translate_to_english(text)
+        # sentences = nltk.tokenize.sent_tokenize(text)
         for sentence in sentences:
-            if self.language == "en":
-                subjectivities.add((sentence.string, self.nlp(sentence.string)._.blob.subjectivity))
-            else:
-                subjectivities.add((sentence.string, self.nlp(self._translate_to_english(sentence.string))._.blob.subjectivity))
+            subjectivities.add((sentence.string, self.nlp(sentence.string)._.blob.subjectivity))
+
+            # if self.language == "en":
+            #     subjectivities.add((sentence.string, self.nlp(sentence.string)._.blob.subjectivity))
+            # else:
+                # subjectivities.add((sentence.string, self.nlp(sentence.string)._.blob.subjectivity))
+                # subjectivities.add((sentence.string, self.nlp(sentence.string)._.blob.subjectivity))
 
         subjectivities_asc = sorted(subjectivities, key=lambda x: x[1])
         return subjectivities_asc

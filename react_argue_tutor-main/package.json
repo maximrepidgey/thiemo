@@ -22,7 +22,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy-production": "react-scripts build && scp -r ./build/* root@157.230.116.39:/var/www/html"
+    "deploy-production": "react-scripts build && cp -r ./build/* /var/www/writingtutor.ch/html"
   },
   "eslintConfig": {
     "extends": [

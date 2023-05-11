@@ -79,7 +79,7 @@ const computeEssayStats = (text, language) => {
 
     let stopWords;
     if (language === "en") stopWords = stopWordsEn
-    else if (language === "en") stopWords = stopWordsDe
+    else if (language === "de") stopWords = stopWordsDe
     for (let i = 0; i < words.length; i++) {
         if (stopWords.indexOf(words[i].toLowerCase()) === -1 && isNaN(words[i])) {
             nonStopWords.push(words[i].toLowerCase());

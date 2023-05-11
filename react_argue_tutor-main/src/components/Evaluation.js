@@ -181,7 +181,7 @@ class Evaluation extends React.Component {
         const timeout = new Promise((resolve, reject) => {
             setTimeout(() => {
                 reject(new Error('Request timed out'));
-            }, 30000); // Timeout after 30 seconds
+            }, 45 * 1000); // Timeout after 45 seconds
         });
         // use race method in order to check what happens first, response from the bot or timeout
         Promise.race([fetch(CHATBOT_URL + "/texttransfer", {
