@@ -88,14 +88,25 @@ class Evaluation extends React.Component {
         let submittedText = document.getElementById("evalution_textarea").value;
 
         if (submittedText.trim().length === 0) {
-            Swal({
-                title: 'Empty text!',
-                text: 'Please write a text about 200 words',
-                icon: 'error',
-                confirmButtonText: 'Next',
-                confirmButtonColor: '#00762C'
-            })
-            return;
+            if (this.state.language === "en"){
+                Swal({
+                    title: 'Empty text!',
+                    text: 'Please write a text about 200 words',
+                    icon: 'error',
+                    confirmButtonText: 'Next',
+                    confirmButtonColor: '#00762C'
+                })
+                return;
+            } else if (this.state.language === "de") {
+                Swal({
+                    title: 'Leerer Text!',
+                    text: 'Schreiben Sie bitte einen Text mit etwa 200 Wörtern',
+                    icon: 'error',
+                    confirmButtonText: 'Weiter',
+                    confirmButtonColor: '#00762C'
+                })
+                return;
+            }
         }
         // document.getElementById("button-eval").disabled = true;
         this.setState({loading: true, text: submittedText}, () => {
@@ -143,13 +154,23 @@ class Evaluation extends React.Component {
         }).catch(() => {
             // todo handle error, pop up a message
             this.setState({dashboardIsComputed: false, loading: false}, () => {
-                Swal({
-                    title: 'Error!',
-                    text: 'an Error have occurred with your evalaution, please try again',
-                    icon: 'error',
-                    confirmButtonText: 'Next',
-                    confirmButtonColor: '#00762C'
-                });
+                if (this.state.language === "en") {
+                    Swal({
+                        title: 'Error!',
+                        text: 'an Error have occurred with your evalaution, please try again',
+                        icon: 'error',
+                        confirmButtonText: 'Next',
+                        confirmButtonColor: '#00762C'
+                    });
+                } else if (this.state.language === "de") {
+                    Swal({
+                        title: 'Fehler!',
+                        text: 'Bei Ihrer Auswertung ist ein Fehler aufgetreten, bitte versuchen Sie es erneut',
+                        icon: 'error',
+                        confirmButtonText: 'Next',
+                        confirmButtonColor: '#00762C'
+                    });
+                }
             })
         });
     }
@@ -184,7 +205,11 @@ class Evaluation extends React.Component {
             for (let i = 0; i < emotions.length; i++) {
                 const score = (emotions[i].score * 100).toFixed(2);
                 document.getElementById(emotions[i].label).value = score;
-                document.getElementById(emotions[i].label).title = "On a scale from not at all appropriate (0%) to very appropriate (100%), this text is: " + score + "%";
+                if (this.state.language === "en") {
+                    document.getElementById(emotions[i].label).title = "On a scale from not at all appropriate (0%) to very appropriate (100%), this text is: " + score + "%";
+                } else if (this.state.language === "de") {
+                    document.getElementById(emotions[i].label).title = "Auf einer Skala von gar nicht zutreffend (0%) bis sehr zutreffend (100%) ist dieser Text: " + score + "%";
+                }
             }
             let adaptedText = text.replaceAll("\\n", "\n");
 
@@ -192,10 +217,16 @@ class Evaluation extends React.Component {
 
             const subj = subjectivity * 100;
             const pol = ((polarity / 2.0) + 0.5) * 100;
+
             document.getElementById("subjectivityBar").value = subj;
-            document.getElementById("subjectivityBar").title = "On a scale from very objective (0%) to very subjective (100%), this text is: " + subj.toFixed(2) + "%";
+            if (this.state.language === "en") {
+                document.getElementById("subjectivityBar").title = "On a scale from very objective (0%) to very subjective (100%), this text is: " + subj.toFixed(2) + "%";
+                document.getElementById("polarityBar").title = "On a scale from very negative (0%) to very positive (100%), this text is: " + pol.toFixed(2) + "%";
+            } else if (this.state.language === "de"){
+                document.getElementById("polarityBar").title = "Auf einer Skala von sehr negativ (0%) bis sehr positiv (100%) ist dieser Text: " + pol.toFixed(2) + "%";
+                document.getElementById("subjectivityBar").title = "Auf einer Skala von sehr objektiv (0%) bis sehr subjektiv (100%) ist dieser Text: " + subj.toFixed(2) + "%";
+            }
             document.getElementById("polarityBar").value = pol;
-            document.getElementById("polarityBar").title = "On a scale from very negative (0%) to very positive (100%), this text is: " + pol.toFixed(2) + "%";
             document.getElementById("summary").innerText = summary;
 
             console.log("checkpoint 1")
@@ -206,10 +237,10 @@ class Evaluation extends React.Component {
             });
             console.log("checkpoint 2")
 
-            let topKeywords = computeEssayStats(adaptedText);
+            let topKeywords = computeEssayStats(adaptedText, this.state.language);
             console.log("checkpoint 3")
 
-            computeDashboard(subjectivity, polarity, adaptedText, sentences, this.addOnClickToReloadPage, topKeywords);
+            computeDashboard(subjectivity, polarity, adaptedText, sentences, this.addOnClickToReloadPage, topKeywords, this.state.language);
             console.log("checkpoint 4")
 
             this.setState({loading: false, showDashboard: true, dashboardIsComputed: true})
@@ -218,13 +249,23 @@ class Evaluation extends React.Component {
         }).catch(() => {
             // todo handle error, pop up a message
             this.setState({dashboardIsComputed: false, loading: false}, () => {
-                Swal({
-                    title: 'Error!',
-                    text: 'an Error have occured with your evalaution, please try again',
-                    icon: 'error',
-                    confirmButtonText: 'Next',
-                    confirmButtonColor: '#00762C'
-                });
+                if (this.state.language === "en") {
+                    Swal({
+                        title: 'Error!',
+                        text: 'an Error have occurred with your evalaution, please try again',
+                        icon: 'error',
+                        confirmButtonText: 'Next',
+                        confirmButtonColor: '#00762C'
+                    });
+                } else if (this.state.language === "de") {
+                    Swal({
+                        title: 'Fehler!',
+                        text: 'Bei Ihrer Auswertung ist ein Fehler aufgetreten, bitte versuchen Sie es erneut',
+                        icon: 'error',
+                        confirmButtonText: 'Next',
+                        confirmButtonColor: '#00762C'
+                    });
+                }
             })
         });
 
@@ -246,7 +287,7 @@ class Evaluation extends React.Component {
         let subjectivity = document.getElementById("subjectivityBar").value;
         let sentencesToHighlight = getTopSentences(subjectivity, this.state.ascSubSentences);
 
-        document.getElementById('userDashboardText').innerHTML = highlightTopNSubjectivitySentences(this.state.dashboardText, sentencesToHighlight, sentencesToHighlight.length);
+        document.getElementById('userDashboardText').innerHTML = highlightTopNSubjectivitySentences(this.state.dashboardText, sentencesToHighlight, sentencesToHighlight.length, this.state.language);
         this.scrollUpDashboard();
     }
 
@@ -257,7 +298,7 @@ class Evaluation extends React.Component {
         let polarity = document.getElementById("polarityBar").value;
         let sentencesToHighlight = getTopSentences(polarity, this.state.ascPolSentences);
 
-        document.getElementById('userDashboardText').innerHTML = highlightTopNPolaritySentences(this.state.dashboardText, sentencesToHighlight, sentencesToHighlight.length);
+        document.getElementById('userDashboardText').innerHTML = highlightTopNPolaritySentences(this.state.dashboardText, sentencesToHighlight, sentencesToHighlight.length, this.state.language);
         this.scrollUpDashboard();
     }
 
@@ -295,29 +336,70 @@ class Evaluation extends React.Component {
                         {/*<DashboardDynamic text={this.state.text} style={{display: this.state.dynamic ? "": "none"}}/>*/}
                         {/*<DashboardStatic text={this.state.text}  style={{display: this.state.dynamic ? "none": ""}}/>*/}
                     </span>
-                    <div id="ELEAIframeTemplate" style={{display: this.state.showDashboard && this.state.dashboardIsComputed? "none": "" }}>
-                        <form method="post">
-                            <label style={{display: "block", fontSize: "x-large", marginBottom: "0.5rem", marginTop: "0.5rem"}}>
-                                Evaluation Text box
-                            </label>
-                            <div className="w3-display-left">
-                                <div className="ehi-wordcount-container">
-                                    <label htmlFor="evalution_textarea"/>
+                    {this.state.language === "en" ?
+                        <div id="ELEAIframeTemplate"
+                             style={{display: this.state.showDashboard && this.state.dashboardIsComputed ? "none" : ""}}>
+                            <form method="post">
+                                <label style={{
+                                    display: "block",
+                                    fontSize: "x-large",
+                                    marginBottom: "0.5rem",
+                                    marginTop: "0.5rem"
+                                }}>
+                                    Evaluation Text box
+                                </label>
+                                <div className="w3-display-left">
+                                    <div className="ehi-wordcount-container">
+                                        <label htmlFor="evalution_textarea"/>
 
-                                    {this.state.loading ?
-                                    <div id={"loadingEvaluationAnimation"}>
-                                        <ClapSpinner size={40} color="#686769" loading={true}/>
-                                    </div> : null
-                                    }
-                                    <textarea spellCheck={true} className="text" rows={25} cols={25} name="evaluationText"
-                                              id="evalution_textarea" placeholder="Enter your text here..." defaultValue={""}/>
+                                        {this.state.loading ?
+                                            <div id={"loadingEvaluationAnimation"}>
+                                                <ClapSpinner size={40} color="#686769" loading={true}/>
+                                            </div> : null
+                                        }
+                                        <textarea spellCheck={true} className="text" rows={25} cols={25}
+                                                  name="evaluationText"
+                                                  id="evalution_textarea" placeholder="Enter your text here..."
+                                                  defaultValue={""}/>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
-                        <button className="buttonEval" id="button-eval" onClick={this.evaluationChatSuggest}>
-                            Evaluate the text
-                        </button>
-                    </div>
+                            </form>
+                            <button className="buttonEval" id="button-eval" onClick={this.evaluationChatSuggest}>
+                                Evaluate the text
+                            </button>
+                        </div> :
+                        <div id="ELEAIframeTemplate"
+                             style={{display: this.state.showDashboard && this.state.dashboardIsComputed ? "none" : ""}}>
+                            <form method="post">
+                                <label style={{
+                                    display: "block",
+                                    fontSize: "x-large",
+                                    marginBottom: "0.5rem",
+                                    marginTop: "0.5rem"
+                                }}>
+                                    Bewertung Text box
+                                </label>
+                                <div className="w3-display-left">
+                                    <div className="ehi-wordcount-container">
+                                        <label htmlFor="evalution_textarea"/>
+
+                                        {this.state.loading ?
+                                            <div id={"loadingEvaluationAnimation"}>
+                                                <ClapSpinner size={40} color="#686769" loading={true}/>
+                                            </div> : null
+                                        }
+                                        <textarea spellCheck={true} className="text" rows={25} cols={25}
+                                                  name="evaluationText"
+                                                  id="evalution_textarea" placeholder="Geben Sie hier Ihren Text ein..."
+                                                  defaultValue={""}/>
+                                    </div>
+                                </div>
+                            </form>
+                            <button className="buttonEval" id="button-eval" onClick={this.evaluationChatSuggest}>
+                                Bewerten Sie den Text
+                            </button>
+                        </div>
+                    }
                 </div>
             </div>
         )

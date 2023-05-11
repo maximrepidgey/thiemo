@@ -1,6 +1,7 @@
 import Swal from "sweetalert";
 
-import stopWords from "../stop_words_english.json"
+import stopWordsEn from "../stop_words_english.json"
+import stopWordsDe from "../stop_words_german.json"
 const CHATBOT_URL = "http://127.0.0.1:8006";
 export {CHATBOT_URL}
 
@@ -39,7 +40,7 @@ export {getTime}
  * Computes the essay stats based on the given input
  *
  */
-const computeEssayStats = (text) => {
+const computeEssayStats = (text, language) => {
     let characterCount = document.getElementById("characterCountDB");
     let wordCount = document.getElementById("wordCountDashboard");
     let sentenceCount = document.getElementById("sentenceCountDB");
@@ -75,6 +76,10 @@ const computeEssayStats = (text) => {
     }
 
     let nonStopWords = [];
+
+    let stopWords;
+    if (language === "en") stopWords = stopWordsEn
+    else if (language === "en") stopWords = stopWordsDe
     for (let i = 0; i < words.length; i++) {
         if (stopWords.indexOf(words[i].toLowerCase()) === -1 && isNaN(words[i])) {
             nonStopWords.push(words[i].toLowerCase());
@@ -143,6 +148,7 @@ function clearDashboardBoxes() {
  *          sentences to highlight
  * @param n
  *          number of sentences to highlight
+ * @param title
  * @returns {string} html string containing the highlighted sentences
  */
 function highlightTopNSentences(text, sentsToHighlight, n, title) {
@@ -183,10 +189,13 @@ function highlightTopNSentences(text, sentsToHighlight, n, title) {
  *          sentences to highlight
  * @param n
  *          number of sentences to highlight
+ * @param language
  * @returns {string} html string containing the highlighted sentences
  */
-function highlightTopNPolaritySentences(text, sentsToHighlight, n) {
-    let title = 'On&nbsp;a&nbsp;scale&nbsp;from&nbsp;very&nbsp;negative&nbsp;(-1)&nbsp;to&nbsp;very&nbsp;positive&nbsp;(1)&nbsp;this&nbsp;sentence&nbsp;is:&nbsp;';
+function highlightTopNPolaritySentences(text, sentsToHighlight, n, language) {
+    let title;
+    if (language === "en") title = 'On&nbsp;a&nbsp;scale&nbsp;from&nbsp;very&nbsp;negative&nbsp;(-1)&nbsp;to&nbsp;very&nbsp;positive&nbsp;(1)&nbsp;this&nbsp;sentence&nbsp;is:&nbsp;';
+    else if (language === "de") title = 'Auf&nbsp;einer&nbsp;Skala&nbsp;von&nbsp;sehr&nbsp;negativ&nbsp;(-1)&nbsp;bis&nbsp;sehr&nbsp;positiv&nbsp;(1)&nbsp;ist&nbsp;dieser&nbsp;Satz:&nbsp;';
 
     return highlightTopNSentences(text, sentsToHighlight, n, title);
 }
@@ -202,12 +211,15 @@ export {highlightTopNPolaritySentences}
  *          sentences to highlight
  * @param n
  *          number of sentences to highlight
+ * @param language
  * @returns {string} html string containing the highlighted sentences
  */
-function highlightTopNSubjectivitySentences(text, sentsToHighlight, n) {
+function highlightTopNSubjectivitySentences(text, sentsToHighlight, n, language) {
     // to also display a value between -1 and 1
     let subjAdapted = sentsToHighlight.map(x => [x[0], 2*x[1] - 1]);
-    let title = 'On&nbsp;a&nbsp;scale&nbsp;from&nbsp;very&nbsp;objective&nbsp;(-1)&nbsp;to&nbsp;very&nbsp;subjective&nbsp;(1)&nbsp;this&nbsp;sentence&nbsp;is:&nbsp;';
+    let title;
+    if (language === "en") title = 'On&nbsp;a&nbsp;scale&nbsp;from&nbsp;very&nbsp;objective&nbsp;(-1)&nbsp;to&nbsp;very&nbsp;subjective&nbsp;(1)&nbsp;this&nbsp;sentence&nbsp;is:&nbsp;';
+    else if (language === "de") title = 'Auf&nbsp;einer&nbsp;Skala&nbsp;von&nbsp;sehr&nbsp;objektiv&nbsp;(-1)&nbsp;bis&nbsp;sehr&nbsp;subjektiv&nbsp;(1)&nbsp;ist&nbsp;dieser&nbsp;Satz:&nbsp;';
 
     return highlightTopNSentences(text, subjAdapted, n, title);
 }
@@ -264,7 +276,6 @@ function highlightKeyword(text, keyword) {
     let word = keyword.replace(/[.,!?]/g, "");
 
 
-    console.log(keyword)
     // removes the first letter of the word and joins it in the end
     // words beginning with Umlauts cannot use the \b property in the RegExp since that doesn't support utf-8 characters
     if (word[0] === "ö" || word[0] === "Ö" || word[0] === "ä" || word[0] === "Ä" || word[0] === "ü" || word[0] === "Ü") {
@@ -284,7 +295,7 @@ export {highlightKeyword}
  *
  * @param text
  *          essay text
- * @param state
+ * @param topKeywords
  *          current react state
  * @returns {string} adapted html string
  */
@@ -319,8 +330,9 @@ function addHighlighFunctionalityToTopKeywords(text, topKeywords) {
  * @param sentences
  * @param addOnClickToReloadPage
  * @param topKeywords
+ * @param language
  */
-function computeDashboard(subjectivity, polarity, userText, sentences, addOnClickToReloadPage, topKeywords) {
+function computeDashboard(subjectivity, polarity, userText, sentences, addOnClickToReloadPage, topKeywords, language) {
     let box = "s";
     let box2 = "p";
 
@@ -350,18 +362,28 @@ function computeDashboard(subjectivity, polarity, userText, sentences, addOnClic
     console.log("check 4")
 
     document.getElementById(box2).style.backgroundColor = "rgba(0,255, 0, 0.75)";
-    writtenPolarity(polarity);
-    writtenSubjectivity(subjectivity);
-    console.log("check 5")
-
-
-    Swal({
-        title: 'Your Dashboard is ready!',
-        text: 'You can now view the analysis results. This is the last screen. To start the process again, you can scroll down and return to the introduction!',
-        icon: 'success',
-        confirmButtonText: 'Show results',
-        confirmButtonColor: '#00762C'
-    })
+    if (language === "en") {
+        writtenPolarity(polarity);
+        writtenSubjectivity(subjectivity);
+        console.log("check 5")
+        Swal({
+            title: 'Your Dashboard is ready!',
+            text: 'You can now view the analysis results. This is the last screen. To start the process again, you can scroll down and return to the introduction!',
+            icon: 'success',
+            confirmButtonText: 'Show results',
+            confirmButtonColor: '#00762C'
+        })
+    } else if (language === "de") {
+        writtenPolarityDE(polarity)
+        writtenSubjectivityDE(subjectivity)
+        Swal({
+            title: 'Ihr Dashboard ist fertig!',
+            text: 'Sie können sich nun die Analyseergebnisse ansehen. Dies ist der letzte Bildschirm. Um den Prozess erneut zu starten, können Sie nach unten scrollen und zur Einleitung zurückkehren!',
+            icon: 'success',
+            confirmButtonText: 'Ergebnisse anzeigen',
+            confirmButtonColor: '#00762C'
+        })
+    }
 }
 
 export {computeDashboard}
@@ -414,6 +436,47 @@ function writtenSubjectivity(subjectivity) {
     }
     if (0.8 < subjectivity && subjectivity <= 1.0) {
         result = "Your text contains a lot of subjective elements. This means that you have included a lot of subjective opinions in your text and almost no fact-based information."
+    }
+    document.getElementById("writtenSubjectivity").innerText = result;
+}
+
+
+function writtenPolarityDE(polarity) {
+    let result;
+    if (-1.0 <= polarity && polarity <= -0.6) {
+        result = "Ihr Text ist sehr negativ geschrieben. Es scheint so, als ob Ihr Text viele negative Begriffe enthält und deshalb in diesen Abschnitt eingeordnet wird."
+    }
+    if (-0.6 < polarity && polarity <= -0.2) {
+        result = "Ihr Text ist negativ geschrieben. Es scheint, als ob Ihr Text einige negative Begriffe enthält und deshalb in diesen Abschnitt eingeordnet wird."
+    }
+    if (-0.2 < polarity && polarity <= 0.2) {
+        result = "Ihr Text ist neutral geschrieben. Es gibt keine Extreme in Bezug auf Positivität oder Negativität."
+    }
+    if (0.2 < polarity && polarity <= 0.6) {
+        result = "Ihr Text ist positiv geschrieben. Es scheint, dass Ihr Text einige positive Begriffe enthält und daher in diesen Bereich eingeordnet wird."
+    }
+    if (0.6 < polarity && polarity <= 1.0) {
+        result = "Ihr Text ist sehr positiv geschrieben. Es scheint, als ob Ihr Text viele positive Begriffe enthält und deshalb in diesen Abschnitt eingeordnet wird."
+    }
+    document.getElementById("writtenPolarity").innerText = result;
+}
+
+function writtenSubjectivityDE(subjectivity) {
+    let result; //0 very objective/1 very subjective
+    if (0.0 <= subjectivity && subjectivity <= 0.2) {
+        result = "Ihr Text ist sehr objektiv geschrieben. Das bedeutet, dass Sie einen Text verfasst haben, der fast keine persönlichen Meinungen enthält, sondern viele faktenbasierte Informationen."
+    }
+    if (0.2 < subjectivity && subjectivity <= 0.4) {
+        result = "Ihr Text ist objektiv geschrieben. Das bedeutet, dass Sie einen Text verfasst haben, der wenige persönliche Meinungen, aber mehr sachliche Informationen enthält."
+    }
+    if (0.4 < subjectivity && subjectivity <= 0.6) {
+        result = "Ihr Text enthält einige subjektive Elemente. Das bedeutet, dass Sie einen Text geschrieben haben, der einige persönliche Meinungen, aber auch einige sachliche Informationen enthält."
+    }
+    if (0.6 < subjectivity && subjectivity <= 0.8) {
+        result = "Ihr Text enthält einige stark subjektive Elemente, d.h. Sie haben ein gewisses Maß an subjektiver Meinung und weniger faktenbasierte Informationen in Ihren Text eingebaut."
+    }
+    if (0.8 < subjectivity && subjectivity <= 1.0) {
+        result = "Ihr Text enthält eine Menge subjektiver Elemente. Das bedeutet, dass Sie eine Menge subjektiver Meinungen in Ihren Text eingebaut haben und fast keine faktenbasierten Informationen."
     }
     document.getElementById("writtenSubjectivity").innerText = result;
 }
