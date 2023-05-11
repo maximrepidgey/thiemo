@@ -4,7 +4,7 @@ class DashboardDynamic extends React.Component {
 
     constructor(props) {
         super(props);
-        
+
         let ratingsObjectivity, ratingsReadability, ratingsStructure, ratingsConciseness;
 
         const ratingsObjectivityEn = [
@@ -82,42 +82,32 @@ class DashboardDynamic extends React.Component {
             ratingsReadability = ratingsReadabilityDe
         }
 
+
         this.state = {
             text: props.text,
-            general: props.general,
-            readability: props.readability, // is an object {"info": readability, "score": 1.5, "reason": "<text>", "improvement": "<text>"}
-            structure: props.structure,
-            objectivity: props.objectivity,
-            conciseness: props.conciseness,
+            general: props.general, // attach infoShow to the readability
+            // example object {"info": <readability in language>, "score": 1.5, "reason": "<text>", "improvement": "<text>", key: "readability"}
+            readability: {...props.readability, ...{reasonShow: false, improvementShow: false, ratings: ratingsReadability}},
+            structure: {...props.structure, ...{reasonShow: false, improvementShow: false, ratings: ratingsStructure}},
+            objectivity: {...props.objectivity, ...{reasonShow: false, improvementShow: false, ratings: ratingsObjectivity}},
+            conciseness: {...props.conciseness, ...{reasonShow: false, improvementShow: false, ratings: ratingsConciseness}},
             language: props.language,
-            infoShow: {
-                readability: {reason: false, improvement: false, ratings: ratingsReadability},
-                structure: {reason: false, improvement: false, ratings: ratingsStructure},
-                objectivity: {reason: false, improvement: false, ratings: ratingsObjectivity},
-                conciseness: {reason: false, improvement: false, ratings: ratingsConciseness},
-            }
+            // infoShow: infoShow,
+
         };
     }
 
     handleReason = (el) => {
         // if close the reason, close also improvement
         this.setState(prevState => ({
-            ...prevState,
-            infoShow: {
-                ...prevState.infoShow,
-                [el]: {reason: !this.state.infoShow[el].reason, improvement: prevState.infoShow[el].improvement, ratings: prevState.infoShow[el].ratings}
-            }
+            [el.key]: {...prevState[el.key], reasonShow: !el.reasonShow}
         }))
     }
 
     handleImprovement = (el) => {
         // if close the reason, close also improvement
         this.setState(prevState => ({
-            ...prevState,
-            infoShow: {
-                ...prevState.infoShow,
-                [el]: {reason: prevState.infoShow[el].reason, improvement: !this.state.infoShow[el].improvement, ratings: prevState.infoShow[el].ratings}
-            }
+            [el.key]: {...prevState[el.key], improvementShow: !el.improvementShow}
         }))
     }
 
@@ -132,7 +122,6 @@ class DashboardDynamic extends React.Component {
 
         const evaluations = [this.state.readability, this.state.structure, this.state.objectivity, this.state.conciseness]
 
-        // const ratingsObjectivity = ["Very subjective", "Subjective", "Neutral", "Objective", "Very objective",]
         if (this.state.language === "en") {
             return (
                 <div id="dashboard-dynamic">
@@ -186,24 +175,24 @@ class DashboardDynamic extends React.Component {
                                                             </progress>
                                                             <div className="progressbarText">{el.score}</div>
                                                             <div className="row w-100 text-center mx-auto mt-2" style={{marginBottom: 15}}>
-                                                                {this.state.infoShow[el.info].ratings.map(({low, high, text}) => (
+                                                                {el.ratings.map(({low, high, text}) => (
                                                                     <div key={text} className="col-md-2 border mx-auto rating" style={{backgroundColor: this.computeScore(el.score, low, high) ? "rgba(0,255, 0, 0.75)" : "rgba(255, 255, 255, 0.75)"}}>
                                                                         {text}
                                                                     </div>
                                                                 ))}
                                                             </div>
                                                             {/*create a link that open explanation*/}
-                                                            <a id={"button-reason-" + el.info} onClick={() => this.handleReason(el.info)} className={"show-text-btn"}>
-                                                                {this.state.infoShow[el.info].reason ? "close": "click for explanations"}
+                                                            <a id={"button-reason-" + el.key} onClick={() => this.handleReason(el)} className={"show-text-btn"}>
+                                                                {el.reasonShow ? "close": "click for explanations"}
                                                             </a>
-                                                            <div id={"text-reason-"+el.info} className={this.state.infoShow[el.info].reason ? "hidden-text show": "hidden-text hide" }>
+                                                            <div id={"text-reason-"+el.key} className={el.reasonShow ? "hidden-text show": "hidden-text hide" }>
                                                                 <p>{el.reason}</p>
                                                             </div>
 
-                                                            <a id={"button-improvement-" + el.info} onClick={() => this.handleImprovement(el.info)} className={this.state.infoShow[el.info].reason ? "show-text-btn": "show-text-btn hide" }>
-                                                                {this.state.infoShow[el.info].improvement ? "close": "click to see the improvements that you can make"}
+                                                            <a id={"button-improvement-" + el.key} onClick={() => this.handleImprovement(el)} className={el.reasonShow ? "show-text-btn": "show-text-btn hide" }>
+                                                                {el.improvementShow ? "close": "click to see the improvements that you can make"}
                                                             </a>
-                                                            <div id={"text-improvement-"+el.info} className={this.state.infoShow[el.info].improvement &&  this.state.infoShow[el.info].reason? "hidden-text show": "hidden-text hide" }>
+                                                            <div id={"text-improvement-"+el.key} className={el.improvementShow &&  el.reasonShow? "hidden-text show": "hidden-text hide" }>
                                                                 <p>{el.improvement}</p>
                                                             </div>
                                                         </React.Fragment>
@@ -276,7 +265,7 @@ class DashboardDynamic extends React.Component {
                                                     </div>
 
                                                     {evaluations.map(el => (
-                                                        <React.Fragment key={el.info}>
+                                                        <React.Fragment key={el.key}>
                                                             <h6 className="my-2"> {el.info.charAt(0).toUpperCase() + el.info.slice(1)} </h6>
                                                             <progress className={"progress"} id={el.info.toLowerCase()} max="100" value={el.score*2*10}
                                                                       title={"Auf einer Skala von 1 (schlecht) bis 5 (gut) die " +el.info + " ist:"}
@@ -284,24 +273,24 @@ class DashboardDynamic extends React.Component {
                                                             </progress>
                                                             <div className="progressbarText">{el.score}</div>
                                                             <div className="row w-100 text-center mx-auto mt-2" style={{marginBottom: 15}}>
-                                                                {this.state.infoShow[el.info].ratings.map(({low, high, text}) => (
+                                                                {el.ratings.map(({low, high, text}) => (
                                                                     <div key={text} className="col-md-2 border mx-auto rating" style={{backgroundColor: this.computeScore(el.score, low, high) ? "rgba(0,255, 0, 0.75)" : "rgba(255, 255, 255, 0.75)"}}>
                                                                         {text}
                                                                     </div>
                                                                 ))}
                                                             </div>
                                                             {/*create a link that open explanation*/}
-                                                            <a id={"button-reason-" + el.info} onClick={() => this.handleReason(el.info)} className={"show-text-btn"}>
-                                                                {this.state.infoShow[el.info].reason ? "schließen": "für Erklärungen anklicken"}
+                                                            <a id={"button-reason-" + el.key} onClick={() => this.handleReason(el)} className={"show-text-btn"}>
+                                                                {el.reasonShow ? "schließen": "für Erklärungen anklicken"}
                                                             </a>
-                                                            <div id={"text-reason-"+el.info} className={this.state.infoShow[el.info].reason ? "hidden-text show": "hidden-text hide" }>
+                                                            <div id={"text-reason-"+el.key} className={el.reasonShow ? "hidden-text show": "hidden-text hide" }>
                                                                 <p>{el.reason}</p>
                                                             </div>
 
-                                                            <a id={"button-improvement-" + el.info} onClick={() => this.handleImprovement(el.info)} className={this.state.infoShow[el.info].reason ? "show-text-btn": "show-text-btn hide" }>
-                                                                {this.state.infoShow[el.info].improvement ? "schließen": "Klicken Sie, um die Verbesserungen zu sehen, die Sie vornehmen können"}
+                                                            <a id={"button-improvement-" + el.key} onClick={() => this.handleImprovement(el)} className={el.reasonShow ? "show-text-btn": "show-text-btn hide" }>
+                                                                {el.improvementShow ? "schließen": "Klicken Sie, um die Verbesserungen zu sehen, die Sie vornehmen können"}
                                                             </a>
-                                                            <div id={"text-improvement-"+el.info} className={this.state.infoShow[el.info].improvement &&  this.state.infoShow[el.info].reason? "hidden-text show": "hidden-text hide" }>
+                                                            <div id={"text-improvement-"+el.key} className={el.improvementShow &&  el.reasonShow? "hidden-text show": "hidden-text hide" }>
                                                                 <p>{el.improvement}</p>
                                                             </div>
                                                         </React.Fragment>

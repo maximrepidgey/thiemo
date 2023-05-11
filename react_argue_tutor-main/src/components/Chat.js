@@ -668,7 +668,7 @@ class Chat extends React.Component {
                         <div className="header-button-bar">
                             <button className="header-button" id="open-help-button" onClick={helpButtonClick}>
                                 <i className="fa fa-question-circle"/>
-                                <span>Hilfen</span>
+                                <span>Hilfe</span>
                             </button>
                             <button className="header-button" id="open-Detail-button" onClick={detailButtonClick}>
                                 <i className="fa fa-comments"/>
@@ -692,7 +692,7 @@ class Chat extends React.Component {
                             <button className="header-button" id="close-help-button" style={{display: "none"}}
                                     onClick={hideHelp}>
                                 <i className="fa fa-times"/>
-                                <span>Hilfen</span>
+                                <span>Hilfe</span>
                             </button>
                         </div>
                     </div>
