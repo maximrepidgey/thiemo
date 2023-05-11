@@ -26,7 +26,7 @@ MODEL = "gpt-3.5-turbo"
 # Initialize Flask for webapp
 application = Flask(__name__)
 application.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
-FLASK_PORT = 8006  # use 8080 for local setup
+FLASK_PORT = 8007  # use 8080 for local setup
 SERVER_IP = os.getenv("FLASK")
 # configure redis and Celery
 application.config['CELERY_BROKER_URL'] = 'redis://localhost:6379'
@@ -38,7 +38,7 @@ celery.conf.update(application.config)
 CORS(application)
 
 # create an instance of the chatbot of different languages
-chatomaticEN = Chatomatic("data/DialoguesEN.yml", language="en")
+chatomaticEN = Chatomatic("data/DialoguesEn.yml", language="en")
 chatomaticDE = Chatomatic("data/Dialogues.yml", language="de")
 
 # Application settings

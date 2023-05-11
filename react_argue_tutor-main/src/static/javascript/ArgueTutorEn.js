@@ -2,7 +2,7 @@ import Swal from "sweetalert";
 
 import stopWordsEn from "../stop_words_english.json"
 import stopWordsDe from "../stop_words_german.json"
-const CHATBOT_URL = "http://127.0.0.1:8006";
+const CHATBOT_URL = "http://127.0.0.1:8007";
 export {CHATBOT_URL}
 
 

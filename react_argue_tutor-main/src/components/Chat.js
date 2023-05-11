@@ -185,6 +185,7 @@ class Chat extends React.Component {
         fetch(CHATBOT_URL + "/getResponse",
             {
                 method: "POST",
+                mode: "CORS",
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -415,6 +416,7 @@ class Chat extends React.Component {
 
             fetch(CHATBOT_URL + "/feedback", {
                 method: "POST",
+                mode: "CORS",
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
