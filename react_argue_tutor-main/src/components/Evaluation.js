@@ -130,7 +130,7 @@ class Evaluation extends React.Component {
         //todo change to production
         Promise.race([fetch(CHATBOT_URL + "/evaluate", {
                 method: "POST",
-                mode: "CORS",
+                mode: "cors",
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
@@ -187,7 +187,7 @@ class Evaluation extends React.Component {
         // use race method in order to check what happens first, response from the bot or timeout
         Promise.race([fetch(CHATBOT_URL + "/texttransfer", {
                 method: "POST",
-                mode: "CORS",
+                mode: "cors",
 
             headers: {
                     'Content-Type': 'application/json;charset=utf-8'
