@@ -38,8 +38,8 @@ celery.conf.update(application.config)
 CORS(application)
 
 # create an instance of the chatbot of different languages
-chatomaticEN = Chatomatic("data/DialoguesEn.yml", language="en")
-chatomaticDE = Chatomatic("data/Dialogues.yml", language="de")
+chatomaticEN = Chatomatic("data/dialoguesEn.yml", language="en")
+chatomaticDE = Chatomatic("data/dialogues.yml", language="de")
 
 # Application settings
 # currentPath = os.path.dirname(os.path.abspath(__file__))  # Current absolute file path

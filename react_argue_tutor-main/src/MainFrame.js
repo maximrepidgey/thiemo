@@ -8,28 +8,28 @@ import {Chat} from "./components/Chat";
 class MainFrame extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            chatGPT: true,
-            showPrivacy: true,
-            showTutor: false,
-            showEvaluationSelection: false,
-            evaluationDynamic: true,
-            language: "",
-        };
-
         /**
          * Startup of the Chatbot.
          */
+        let userName= ""
         ready(() => {
             // The following is meant for the login:
-            let userName = ""; // 1234-rdexp01
+            // let userName = ""; // 1234-rdexp01
             while (!(new RegExp('[a-zA-Z0-9\b]{4}-rdexp[0-1][0-1]$')).test(userName)) {
                 userName = prompt("Please enter your code :");
             }
-            const chatbot = Boolean(Number(userName.at(-2)))
-            const evaluation = Boolean(Number(userName.at(-1)))
-            this.setState({chatGPT: chatbot, evaluationDynamic: evaluation})
         });
+        const chatbot = Boolean(Number(userName.at(-2)))
+        const evaluation = Boolean(Number(userName.at(-1)))
+        console.log(chatbot)
+        this.state = {
+            chatGPT: chatbot,
+            showPrivacy: true,
+            showTutor: false,
+            showEvaluationSelection: false,
+            evaluationDynamic: evaluation,
+            language: "",
+        };
     }
 
 
