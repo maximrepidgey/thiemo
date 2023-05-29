@@ -182,7 +182,16 @@ class Chat extends React.Component {
      *          request of the user
      */
     getResponse(text) {
-        fetch(CHATBOT_URL + "/getResponse",
+        const timeout = new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (this.state.language === "en")
+                    reject(new Error('Timeout, please try again'));
+                else if (this.state.language === "de")
+                    reject(new Error('Zeitüberschreitung, bitte versuchen Sie es erneut'));
+            }, 1*60*1000); // Timeout after 1 mins
+        });
+
+        Promise.race([fetch(CHATBOT_URL + "/getResponse",
             {
                 method: "POST",
                 mode: "cors",
@@ -190,13 +199,28 @@ class Chat extends React.Component {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({gpt: this.state.chatGPT, text: text, language: this.state.language})
-            })
+            }), timeout])
             .then(response => {
+                if (!response.ok) {
+                    if (this.state.language === "en")
+                        return Promise.reject(new Error("rate limit reached, please wait 1 min and try again"))
+                    else if (this.state.language === "de")
+                        return Promise.reject(new Error("Ratenlimit erreicht, bitte 1 Minute warten und versuchen Sie es erneu"))
+                }
                 return response.json()
             })
             .then(data => {
                 let botReply = data.botReply;
                 this.addBotMessage(botReply);
+            })
+            .catch((error) => {
+                Swal({
+                    title: 'Error/Fehler!',
+                    text: error.message,
+                    icon: 'error',
+                    confirmButtonText: 'Next',
+                    confirmButtonColor: '#00762C'
+                });
             })
     }
 

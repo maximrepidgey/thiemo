@@ -1,9 +1,9 @@
 import React from "react";
 
-import {ready} from "../static/javascript/ArgueTutorEn";
+import {ready} from "./static/javascript/ArgueTutorEn";
 
-import {Evaluation} from "./Evaluation";
-import {Chat} from "./Chat";
+import {Evaluation} from "./components/Evaluation";
+import {Chat} from "./components/Chat";
 
 class MainFrame extends React.Component {
     constructor(props) {
@@ -23,9 +23,9 @@ class MainFrame extends React.Component {
         ready(() => {
             // The following is meant for the login:
             let userName = "";
-            /*while (!(new RegExp('[a-zA-Z0-9\b]{4}-rdexp$')).test(userName)) {
+            while (!(new RegExp('[a-zA-Z0-9\b]{4}-rdexp$')).test(userName)) {
                 userName = prompt("Please enter your code :");
-            }*/
+            }
             // todo assign tutor basing on the code
         });
     }
@@ -110,7 +110,6 @@ class MainFrame extends React.Component {
         else if (this.state.showTutor) return (
             <div className={"chatbot"} id={"tutor"}>
                 <h3>Choose the chatbot modality</h3>
-                <p>Choose the chatbot modality that you have been assigned</p>
                 <button type={"button"} className={"button button-primary"}
                         onClick={() => this.setState({showTutor: false, chatGPT: false, showEvaluationSelection: true})}>
                     Static
@@ -125,8 +124,6 @@ class MainFrame extends React.Component {
         else if (this.state.showEvaluationSelection) return (
             <div className={"chatbot"} id={"tutor"}>
                 <h3>Choose the evaluation method</h3>
-                Choose the evaluation that you have been assigned <br/>
-                If you have made a mistake, just reload the page <br/>
                 <button type={"button"} className={"button button-primary"}
                         onClick={() => this.setState({showEvaluationSelection: false, evaluationDynamic: false})}>
                     Static

@@ -124,10 +124,12 @@ class Evaluation extends React.Component {
         // todo check for timeout
         const timeout = new Promise((resolve, reject) => {
             setTimeout(() => {
-                reject(new Error('Request timed out'));
+                if (this.state.language === "en")
+                    reject(new Error('Timeout, please try again'));
+                else if (this.state.language === "de")
+                    reject(new Error('Zeitüberschreitung, bitte versuchen Sie es erneut'));
             }, 4*60*1000); // Timeout after 4 mins
         });
-        //todo change to production
         Promise.race([fetch(CHATBOT_URL + "/evaluate", {
                 method: "POST",
                 mode: "cors",
@@ -136,7 +138,15 @@ class Evaluation extends React.Component {
                 },
                 body: JSON.stringify({text: text, language: this.state.language})
             }), timeout]
-        ).then(response => response.json()
+        ).then(response => {
+                if (!response.ok) {
+                    if (this.state.language === "en")
+                        return Promise.reject(new Error("rate limit reached, please wait 1 min and try again"))
+                    else if (this.state.language === "de")
+                        return Promise.reject(new Error("Ratenlimit erreicht, bitte 1 Minute warten und versuchen Sie es erneu"))
+                }
+            return response.json()
+        }
         ).then(data => {
             console.log(data)
             let dynamicData = {
@@ -152,26 +162,17 @@ class Evaluation extends React.Component {
             })
 
 
-        }).catch(() => {
+        }).catch((error) => {
+            console.log(error)
             // todo handle error, pop up a message
             this.setState({dashboardIsComputed: false, loading: false}, () => {
-                if (this.state.language === "en") {
-                    Swal({
-                        title: 'Error!',
-                        text: 'an Error have occurred with your evalaution, please try again',
-                        icon: 'error',
-                        confirmButtonText: 'Next',
-                        confirmButtonColor: '#00762C'
-                    });
-                } else if (this.state.language === "de") {
-                    Swal({
-                        title: 'Fehler!',
-                        text: 'Bei Ihrer Auswertung ist ein Fehler aufgetreten, bitte versuchen Sie es erneut',
-                        icon: 'error',
-                        confirmButtonText: 'Next',
-                        confirmButtonColor: '#00762C'
-                    });
-                }
+                Swal({
+                    title: 'Error/Fehler!',
+                    text: error.message,
+                    icon: 'error',
+                    confirmButtonText: 'Next',
+                    confirmButtonColor: '#00762C'
+                });
             })
         });
     }
@@ -189,7 +190,7 @@ class Evaluation extends React.Component {
                 method: "POST",
                 mode: "cors",
 
-            headers: {
+                headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
                 body: JSON.stringify({text: text, language: this.state.language})

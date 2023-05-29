@@ -3,7 +3,7 @@
 
 import csv
 import os
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, abort
 from datetime import datetime
 from dateTime import getTime, getDate
 from time import localtime, strftime
@@ -261,10 +261,14 @@ def evaluate():
     for el in evaluations:
         info.append(gpt_reply_evaluation.s({"eval": el, "text": text, "language": language}))
 
-    jobs = group(info)
-    result = jobs.delay()
+    try:
+        jobs = group(info)
+        result = jobs.delay()
 
-    res = result.get()  # a list of objects
+        res = result.get()  # a list of objects
+    except openai.error.RateLimitError as e:
+        return abort(502, "Too many request to the system, please wait a minute")
+
     final = {}
     for el in res:
         final[el["key"]] = el
@@ -275,6 +279,7 @@ def evaluate():
     final.update({"general": general})  # add general feedback to the reply
 
     return jsonify(final)
+
 
 @application.route("/tev", methods=["POST"])
 def route_test():

@@ -5,7 +5,7 @@ import './static/stylesheet/normalize.css';
 import './static/stylesheet/epfl.css';
 // import './static/stylesheet/control_experiment/style2_Test.css'
 
-import {MainFrame} from "./components/MainFrame";
+import {MainFrame} from "./MainFrame";
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
