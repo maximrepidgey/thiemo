@@ -18,15 +18,17 @@ class MainFrame extends React.Component {
         };
 
         /**
-         * Startup of the Chatbot
+         * Startup of the Chatbot.
          */
         ready(() => {
             // The following is meant for the login:
-            let userName = "";
-            while (!(new RegExp('[a-zA-Z0-9\b]{4}-rdexp$')).test(userName)) {
+            let userName = ""; // 1234-rdexp01
+            while (!(new RegExp('[a-zA-Z0-9\b]{4}-rdexp[0-1][0-1]$')).test(userName)) {
                 userName = prompt("Please enter your code :");
             }
-            // todo assign tutor basing on the code
+            const chatbot = Boolean(Number(userName.at(-2)))
+            const evaluation = Boolean(Number(userName.at(-1)))
+            this.setState({chatGPT: chatbot, evaluationDynamic: evaluation})
         });
     }
 
@@ -107,7 +109,7 @@ class MainFrame extends React.Component {
             }
         }
         // render introduction screen
-        else if (this.state.showTutor) return (
+        /*else if (this.state.showTutor) return (
             <div className={"chatbot"} id={"tutor"}>
                 <h3>Choose the chatbot modality</h3>
                 <button type={"button"} className={"button button-primary"}
@@ -133,7 +135,7 @@ class MainFrame extends React.Component {
                     Dynamic
                 </button>
             </div>
-        )
+        )*/
         // render the main chatbot
         else return (
             <div>
