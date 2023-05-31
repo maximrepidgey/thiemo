@@ -13,6 +13,7 @@ import openai
 from chatomatic import *
 from flask_cors import *
 from celery import Celery, group
+import re
 # import evaluation
 from evaluation import EnglishEvaluation, GermanEvaluation
 
@@ -201,7 +202,7 @@ infoDe = {
     "readability": "Lesbarkeit",
     "objectivity": "Objektivität",
     "conciseness": "Prägnanz",
-    "structure": "Struktur"
+    "argumentative structure": "Argumentationsstruktur"
 }
 
 @celery.task
@@ -217,7 +218,10 @@ def gpt_reply_evaluation(info):
 
     res = 0
     for i in range(score_iter):
-        res += float(scores['choices'][i]['message']['content'])
+	# extract the score from string
+        tmp = re.findall(r"[-+]?(?:\d*\.*\d+)", scores['choices'][i]['message']['content'])
+       # res += float(scores['choices'][i]['message']['content'])
+        res += float(tmp[0])
 
     res /= score_iter  # average score of the score
     res = round(res, 2)  # round to 2 decimanls
@@ -235,11 +239,11 @@ def gpt_reply_evaluation(info):
     improvement = gpt_reply(query, 0.8, 0.4, 0.6)
     improvement = improvement['choices'][0]['message']['content']
     # print("improvement: {}".format(improvement))
+    key = detail
     if detail == "argumentative structure": # rename argumentative structure to structure to facilitate variable passing to frontend
-        detail = "structure"
+        key = "structure"
 
     # change to german
-    key = detail
     if language != "en":
         detail = infoDe[detail]
 
