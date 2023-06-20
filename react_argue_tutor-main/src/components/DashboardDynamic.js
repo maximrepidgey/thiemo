@@ -97,6 +97,9 @@ class DashboardDynamic extends React.Component {
         };
     }
 
+    /**
+     * Handle the reason text. Closes and opens the respective section.
+     */
     handleReason = (el) => {
         // if close the reason, close also improvement
         this.setState(prevState => ({
@@ -104,6 +107,9 @@ class DashboardDynamic extends React.Component {
         }))
     }
 
+    /**
+     * Handle the improvements text. Closes and opens the respective section.
+     */
     handleImprovement = (el) => {
         // if close the reason, close also improvement
         this.setState(prevState => ({
@@ -111,6 +117,9 @@ class DashboardDynamic extends React.Component {
         }))
     }
 
+    /**
+     * Return true only for the box within the score falls. Used to highlight the boxes under the score bar.
+     */
     computeScore = (scoreAssigned, scoreLow, scoreHigh) => {
         let score = parseInt(scoreAssigned)
         score = score*2*10 // make it like percentage

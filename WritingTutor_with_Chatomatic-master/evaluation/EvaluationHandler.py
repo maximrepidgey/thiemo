@@ -30,22 +30,41 @@ class EvaluationHandler(ABC):
 
     @abstractmethod
     def _sentences(self):
+        """
+        Splits the text into sentences.
+        :return :
+            List of String, list of sentences
+        """
         pass
 
     @abstractmethod
     def _get_summary(self):
+        """
+        Generates summary of the text. Use any summarization method.
+        :return :
+            String: summarized text
+        """
         pass
 
     def _get_subjective(self):  # returns float in  [0.0, 1.0] objective to subjective
+        """
+        Produce subjectivity score of the text.
+        """
         # uses translated text
         doc = self.nlp(self.text)
         return doc._.blob.subjectivity
 
     def _get_polarity(self):  # returns float in  [-1.0, 1.0]
+        """
+        Produce polarity score of the text.
+        """
         doc = self.nlp(self.text)
         return doc._.blob.sentiment.polarity
 
     def _translate_to_english(self, text):
+        """
+        Translate to english a text.
+        """
         # Google translate:
         # translated_text = translator.translate(text.replace("\n", "\n"), lang_tgt='en')
         print("text to translate")
@@ -57,6 +76,9 @@ class EvaluationHandler(ABC):
         return translated_text
 
     def _get_asc_subjectivity_per_sentence(self, sentences):
+        """
+        Returns the sentences of the essay ordered by subjectivity in ascending order.
+        """
         # used in every language different from
         subjectivities = set()
         # text = self.text
@@ -75,6 +97,9 @@ class EvaluationHandler(ABC):
         return subjectivities_asc
 
     def _get_asc_polarity_per_sentence(self, sentences):
+        """
+        Returns the sentences of the essay ordered by polarity in ascending order.
+        """
         polarities = set()
 
         for sentence in sentences:

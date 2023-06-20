@@ -1,4 +1,4 @@
-# ArgueTutor (Update 2022-04-05)
+# WritingTutor (Update 2022-04-05)
 *Installation:*
 
 1. Python 3.8 installieren

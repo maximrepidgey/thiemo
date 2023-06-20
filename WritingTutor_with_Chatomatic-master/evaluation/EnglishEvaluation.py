@@ -21,7 +21,6 @@ class EnglishEvaluation(EvaluationHandler):
 
         preprocess_text = super().get_text().strip().replace("\n", "")
         t5_prepared_Text = "summarize: " + preprocess_text
-        print("original text preprocessed: \n", preprocess_text)
 
         tokenized_text = tokenizer.encode(t5_prepared_Text, return_tensors="pt")
 

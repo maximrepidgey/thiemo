@@ -120,6 +120,10 @@ class Evaluation extends React.Component {
     }
 
 
+    /**
+     * Performs evaluation of the essay using ChatGPT-based agent.
+     * @param text the text of the user
+     */
     dynamicEvaluation = (text) => {
         // todo check for timeout
         const timeout = new Promise((resolve, reject) => {
@@ -139,6 +143,7 @@ class Evaluation extends React.Component {
                 body: JSON.stringify({text: text, language: this.state.language})
             }), timeout]
         ).then(response => {
+                // if the error happens, it is due the unavailability of chatgpt
                 if (!response.ok) {
                     if (this.state.language === "en")
                         return Promise.reject(new Error("rate limit reached, please wait 1 min and try again"))
@@ -164,7 +169,6 @@ class Evaluation extends React.Component {
 
         }).catch((error) => {
             console.log(error)
-            // todo handle error, pop up a message
             this.setState({dashboardIsComputed: false, loading: false}, () => {
                 Swal({
                     title: 'Error/Fehler!',
@@ -178,6 +182,10 @@ class Evaluation extends React.Component {
     }
 
 
+    /**
+     * Performs evaluation using rule-based chatbot.
+     * @param text the text of the user
+     */
     staticEvaluation = (text) => {
         // Used to signal to the user if there is a massive evaluation delay
         const timeout = new Promise((resolve, reject) => {
