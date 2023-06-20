@@ -13,6 +13,7 @@ import openai
 from chatomatic import *
 from flask_cors import *
 from celery import Celery, group
+import re
 # import evaluation
 from evaluation import EnglishEvaluation, GermanEvaluation
 
@@ -229,7 +230,11 @@ def gpt_reply_evaluation(info):
 
     res = 0
     for i in range(score_iter):
-        res += float(scores['choices'][i]['message']['content'])
+	# extract the score from string
+        tmp = re.findall(r"[-+]?(?:\d*\.*\d+)", scores['choices'][i]['message']['content'])
+       # res += float(scores['choices'][i]['message']['content'])
+        res += float(tmp[0])
+
     res /= score_iter  # average score of the score
     res = round(res, 2)  # round to 2 decimanls
     # print("score: {}".format(res))
