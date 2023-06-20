@@ -87,7 +87,7 @@ class Chatomatic:
         Uses bm25 model to find the similarity between the question of the user and predefined possible questions
 
         :param question: string, question of the user
-        :return:
+        :return :
             String, the bot's response
         """
         tokenized_corpus = [doc.title.split(" ") for doc in self.questions]

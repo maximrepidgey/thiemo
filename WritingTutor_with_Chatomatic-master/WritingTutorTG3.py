@@ -103,7 +103,7 @@ def get_bot_response():
 
     # if initialization or evaluation do not send text to chatgpt
     if gpt and "StartGPT" not in text and "evaluation process" not in text:
-
+        # send a conversational request to ChatGPT
         system_string = "Act as writing tutor that helps students to write an argumentative essay. Provide concise answers, not longer than 120 words."
         botReply = openai.ChatCompletion.create(
             model=MODEL,
@@ -133,6 +133,7 @@ def get_bot_response():
             "<button class =\"chatSuggest\" onclick=\"chatSuggest('Was ist " + suggestions[1] + " und wie kann ich sie verbessern?');\">Was ist " + suggestions[1] + " und wie kann ich sie verbessern?</button>"
         # randomly assign theory button if the user is lost, maybe not the best choice
         # append evaluation button everytime, except when the evaluation have started
+        # in development, todo track a single user
         if not EVALUATION_STARTED:
             if language == "en":
                 botReply += "<h4 class=\"subtitles\"> Evaluation </h4>" \
@@ -142,9 +143,8 @@ def get_bot_response():
                 "<button class =\"chatSuggest\" onclick=\"chatSuggest('Start evaluation process');\">Sind Sie bereit? Bewertung beginnen</button>"
 
     else:
-        if "evaluation process" in text:
-            EVALUATION_STARTED = True
-
+        # if "evaluation process" in text:
+        #     EVALUATION_STARTED = True
         try:
             bot = switch(language)["chatbot"]
             botReply = str(bot.answer(text))
@@ -184,7 +184,9 @@ def send_feedback():
 
 
 def gpt_reply(query, temperature=1.0, frequency_penalty=0.0, presence_penalty=0.0, n=1, system="You provide feedback for argumentative text."):
-    # default for evaluation
+    """
+    Make request to ChatGPT via API. See https://platform.openai.com/docs/api-reference/chat/create for more information
+    """
     return openai.ChatCompletion.create(
         model=MODEL,
         messages=[
@@ -197,19 +199,29 @@ def gpt_reply(query, temperature=1.0, frequency_penalty=0.0, presence_penalty=0.
         n=n,  # number of generated answers
     )
 
+# translation for german
 infoDe = {
     "readability": "Lesbarkeit",
     "objectivity": "Objektivität",
     "conciseness": "Prägnanz",
-    "structure": "Struktur"
+    "argumentative structure": "Argumentationsstruktur"
 }
 
 @celery.task
 def gpt_reply_evaluation(info):
+    """
+    Evaluates text using the provided metric. Makes parallel requests to ChatGPT.
+    :param: dict - all the information relative to the metric of form {"eval": <String: eval metric>,
+        "text": <String: text to evaluate>, "language": <String: language of the text and response>}
+    :return:
+        dict: of form {"info": <String: evaluation metric name>, "score": <float: 1-5 for the evaluation>,
+        "reason": <String: reason of the given score>, "improvement": <String: possible improvements to be made>, "key": <String: metric reference>}
+    """
     text = info["text"]
     detail = info["eval"]  # evaluation metric, e.g. readability
     language = info["language"]
 
+    # ask the score for the essay
     query = "evaluate the {} of the text from 1 to 5, where 1 is the worst and 5 is the best. Return only the " \
             "number, no text. You can use also fractions and entire numbers. The following text is in {}. \nText: {}".format(detail, switch(language)["language"], text)
     score_iter = 8
@@ -218,11 +230,11 @@ def gpt_reply_evaluation(info):
     res = 0
     for i in range(score_iter):
         res += float(scores['choices'][i]['message']['content'])
-
     res /= score_iter  # average score of the score
     res = round(res, 2)  # round to 2 decimanls
     # print("score: {}".format(res))
 
+    # ask for the reason behind the score
     query = "you rated this text with {} out of 5 for {}, explain why. Also provide concrete examples from the text. " \
             "Write not more than a paragraph. {} \nText: {}".format(res, detail, language_gpt(language), text)
 
@@ -230,16 +242,17 @@ def gpt_reply_evaluation(info):
     reason = reason['choices'][0]['message']['content']
     # print("reason: {}".format(reason))
 
-    # produce many tokes
+    # produces many tokes
+    # ask for improvements
     query = "how can you improve this text in terms of {}. Provide three concrete examples. {} \nText: {}".format(detail, language_gpt(language), text)
     improvement = gpt_reply(query, 0.8, 0.4, 0.6)
     improvement = improvement['choices'][0]['message']['content']
     # print("improvement: {}".format(improvement))
+    key = detail
     if detail == "argumentative structure": # rename argumentative structure to structure to facilitate variable passing to frontend
-        detail = "structure"
+        key = "structure"
 
     # change to german
-    key = detail
     if language != "en":
         detail = infoDe[detail]
 
@@ -262,18 +275,20 @@ def evaluate():
         info.append(gpt_reply_evaluation.s({"eval": el, "text": text, "language": language}))
 
     try:
+        # start jobs
         jobs = group(info)
         result = jobs.delay()
 
         res = result.get()  # a list of objects
     except openai.error.RateLimitError as e:
+        # return 502 if there are too many requests to ChatGPT
         return abort(502, "Too many request to the system, please wait a minute")
 
     final = {}
     for el in res:
         final[el["key"]] = el
 
-
+    # generate general feedback for the essay
     general = gpt_reply("Provide a feedback for the text. write only one paragraph. \n Text: {}".format(text) + language_gpt(language), 0.8, 0.3, 0.4)
     general = general['choices'][0]['message']['content']
     final.update({"general": general})  # add general feedback to the reply
@@ -283,6 +298,7 @@ def evaluate():
 
 @application.route("/tev", methods=["POST"])
 def route_test():
+    # just a test route to display the result from evaluation of chatgpt
     # received_text = request.get_json().get("text")
 
     data ={'readability': {'info': 'Lesbarkeit', 'score': 2.5625, "key": "readability",
@@ -294,7 +310,7 @@ def route_test():
      'conciseness': {'info': 'Prägnanz', 'score': 4.5, "key": "conciseness",
                      'reason': "The text scores high in conciseness because it serves its purpose without wasting any words or beating around the bush. Each paragraph has a clear and definitive argument, adding value to the overall message and not repeating unnecessary information. For example, Body Paragraph 2 stresses that broccoli is a burden on the environment and offers evidence for why this is so. It mentions the resources that go into cultivating broccoli only to have most of it thrown away, further burdening the environment, making a strong counterpoint to those who might suggest that broccoli's health benefits outweigh any drawbacks. Overall, concise writing helps to get the point across more effectively and makes the text more convincing.",
                      'improvement': 'To improve the conciseness of this text, here are three examples:\n\n1. In the introduction, instead of saying "In this essay, I will argue that broccoli is overrated and should never be consumed," you can simply say "Broccoli is overrated and should never be consumed."\n\n2. In Body Paragraph 2, instead of saying "This makes it a burden on the environment and a waste of resources that could be used for more delicious and valuable crops," you can say "It\'s a burden on the environment and wasted resources."\n\n3. In the conclusion, instead of saying "It should be removed from our diets and replaced with better, more enjoyable vegetables," you can say "Replace it with other enjoyable vegetables."'},
-     'structure': {'info': 'Struktur', 'score': 2.5, "key": "structure",
+     'structure': {'info': 'Struktur Arg', 'score': 2.5, "key": "structure",
                    'reason': 'The text has many flaws in its argumentative structure. Firstly, the author makes a sweeping statement in the introduction that broccoli is the worst vegetable without providing any rationale or evidence to support their claim. In addition, the author presents claims that are subjective and not universally proven. For instance, tastes differ from person to person, and it is not factual to state that "broccoli has a terrible taste." Another problem is that the author does not acknowledge any counter-arguments or provide evidence to refute opposing views. The entire essay relies heavily on personal opinions and lacks actual studies or data to support them. To make this essay more persuasive, the author must back up their arguments with verified data and avoid unsubstantiated generalizations.',
                    'improvement': '1. The introduction could be improved by providing more context on why broccoli is usually praised for its health benefits, and then introducing the contrasting argument that it is actually overrated. This would help set up the argument more effectively and engage the reader’s interest.\n\n2. Each body paragraph could be strengthened by including evidence to support the claims being made. For example, in paragraph 1, the author could include a survey or study showing that many people find broccoli unpalatable. In paragraph 2, the author could provide data on the environmental impact of growing and transporting broccoli compared to other crops. In paragraph 3, the author could cite research on the digestive effects of broccoli.\n\n3. The conclusion should summarize the main points of the essay and reiterate the argumentative stance taken by the author. However, it should also leave room for potential counterarguments or alternative perspectives. Instead of stating unequivocally that broccoli should be removed from our diets, the author could acknowledge that some people may still choose to eat it despite its drawbacks or argue that it could be consumed in moderation alongside other vegetables.'},
      'general': "The argumentative text makes a bold and controversial claim that broccoli is the worst vegetable ever. However, the author fails to provide any credible evidence to support this claim. The text is subjective and lacks objectivity, making it difficult to convince readers who may have a different perspective on broccoli. Furthermore, the author's tone is overly aggressive and dismissive towards those who enjoy eating broccoli, which may turn off some readers from engaging with the argument. Therefore, the author needs to include more concrete evidence and adopt a more persuasive tone if they want to convince readers of their claim."}
@@ -322,6 +338,9 @@ def receive_text():
 
 
 def switch(lang, text=""):
+    """
+    Utility function that returns a parameter needed in the implementation.
+    """
     if lang == "en":
         return {"language": "English", "chatbot": chatomaticEN, "evaluation": EnglishEvaluation.EnglishEvaluation(text)}
     elif lang == "de":
